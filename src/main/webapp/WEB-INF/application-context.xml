@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:flow="http://www.springframework.org/schema/webflow-config"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+          http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+          http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
+          http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+          http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd
+          http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-3.1.xsd
+          http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+          http://www.springframework.org/schema/mvc  http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+">
+    <context:component-scan base-package="cz.cvut"/>
+    <context:annotation-config/>
+    
+    <mvc:annotation-driven/>
+   
+    
+    <bean name="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        
+        
+        <property name="validationMessageSource" ref="resourceBundleLocator"> 
+               
+        </property>
+    </bean>
+
+   <bean name="resourceBundleLocator" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    </bean>
+ 
+<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" >
+   <property name="dataSource" ref="myDataSource" />
+   <property name="packagesToScan" value="cz.cvut.hotkomar.model.entity"/>
+   
+   <property name="hibernateProperties">
+     <props>
+        <!--prop key="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop-->
+	<prop key="hibernate.show_sql">true</prop>
+	<prop key="hibernate.hbm2ddl.auto">create</prop> <!-- create/create-drop /validate-->
+	<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> 
+        <prop key="hibernate.current_session_context_class">thread</prop>
+        <prop key="hibernate.query.substitutions">true 1, false 0</prop>
+    </props>
+  </property>
+  
+</bean>
+
+<bean id="myDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/school_admin" />
+                <!--property name="url" value="jdbc:mysql://37.157.195.154:3306/school_admin" /-->
+		<property name="username" value="skola" />
+		<property name="password" value="skola" />
+</bean>
+
+<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" >
+    <property name="sessionFactory" ref="sessionFactory" />
+</bean>
+
+<tx:annotation-driven transaction-manager="transactionManager" />
+<!----> 
+<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+     <constructor-arg value="256"/>
+ </bean>
+   <!--
+     <security:global-method-security secured-annotations="enabled" proxy-target-class="true"/>
+
+    <security:authentication-manager alias="manager">
+        <security:authentication-provider user-service-ref="userDetailsService" >
+            <security:password-encoder ref="passwordEncoder" >
+                <security:salt-source user-property="username"/>
+            </security:password-encoder>    
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <security:http auto-config="true">
+        
+     
+            
+        <security:intercept-url pattern="/bootstrap/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <security:intercept-url pattern="/img/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <security:intercept-url pattern="/index*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <security:intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+
+        
+        <security:form-login login-page="/login.htm" authentication-failure-url="/login.htm?error=true" default-target-url="/index.htm" />
+        <security:logout logout-success-url="/index.htm" logout-url="/logout.htm" />
+    
+        <security:remember-me token-repository-ref="tokenRepo" />
+    
+    </security:http>
+
+    -->
+    <bean id="tokenRepo" class="org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl" />
+   
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+      
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+</beans>
