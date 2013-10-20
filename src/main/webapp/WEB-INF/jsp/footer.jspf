@@ -4,21 +4,14 @@
 
 
 
-</div> <!--first div class="container"-->
-<script src="<spring:url value="/bootstrap/js/jquery.js"/>"></script>
+<footer>
+<p>Marie Hoťková</p>
+</footer>
+</div>
 
- <script src="<spring:url value="/bootstrap/js/bootstrap-transition.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-alert.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-modal.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-dropdown.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-scrollspy.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-tab.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-tooltip.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-popover.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-button.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-collapse.js"/>"></script>
- <script src="<spring:url value="/bootstrap/js/bootstrap-carousel.js"/>"></script>
-<script src="<spring:url value="/bootstrap/js/bootstrap-typeahead.js"/>"></script>
+
+ <script src="<spring:url value="/dist/js/bootstrap.min.js"/>"></script>
+ 
 </body>
 
 </html>
