@@ -18,7 +18,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
 /**
  *
@@ -26,7 +31,7 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table (name="TEST")
-
+@Indexed
 public class Test implements Serializable {
     //class registration identification number
 
@@ -44,6 +49,7 @@ public class Test implements Serializable {
 //   @ManyToOne(fetch= FetchType.EAGER)
 //   private StudentClass id_class;
     //name of test
+    @Field(index = org.hibernate.search.annotations.Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
     //when teacher delete test, visibility will be false
     @Type(type = "true_false")

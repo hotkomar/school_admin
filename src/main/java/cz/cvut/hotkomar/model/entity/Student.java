@@ -4,10 +4,13 @@
  */
 package cz.cvut.hotkomar.model.entity;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.search.annotations.Indexed;
 
 /**
  *
@@ -15,9 +18,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="STUDENT")
+@Indexed(index = "Student_Entity_Index")
 public class Student extends AbstractUser{
     // id class which student is member
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne//(fetch = FetchType.EAGER)
     private StudentClass id_class;
     //student's mother name
     private String motherName;
@@ -33,6 +37,7 @@ public class Student extends AbstractUser{
     private String fatherPhone;
     private String motherMail;
     private String fatherMail;
+    
 
     /**
      *

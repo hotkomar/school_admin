@@ -26,9 +26,23 @@
 </div>
         <div class="panel-body">
             <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
-            
-            <f:form  class="form-horizontal" commandName="form" action="adminNewStudent.htm" method="POST">
-                    
+            <div class="row">
+                <c:if test="${message.positiveFull}">
+    <div class="alert alert-success ">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        ${message.positiveMes}
+    </div>
+</c:if>
+<c:if test="${message.negativeFull}">
+    
+    <div class="alert alert-danger alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  ${message.negativeMes}
+</div>
+</c:if>
+            </div>
+            <f:form enctype="multipart/form-data"  class="form-horizontal" commandName="form" action="adminNewStudent.htm" method="POST">
+                <f:errors path="*" cssClass="alert alert-info" element="div"/>
                         <h4 class="text-info">Přihlašovací údaje</h4>
                         <div class="form-group">
                                                   
@@ -40,7 +54,7 @@
                     </div>
                     <div class="form-group">
                             
-                        <f:label path="password" class="col-lg-2 control-label">Heslo<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <f:label path="password" class="col-lg-2 control-label">Heslo <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:password path="password" id="password" cssClass="form-control"/>
                         <f:errors path="password" element="div" cssClass="alert alert-info" />
@@ -49,22 +63,35 @@
                         
                         <div class="form-group">
                             
-                        <f:label path="password2" class="col-lg-2 control-label">Ověření hesla<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <f:label path="password2" class="col-lg-2 control-label">Ověření hesla <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:password path="password2" id="password2" cssClass="form-control"/>
                         <f:errors path="password2" element="div" cssClass="alert alert-info" />
                         </div>
                     </div>
                        
+                        <div class="form-group">
                             
+                        <f:label path="id_class" class="col-lg-2 control-label">Trída:</f:label>
+                        <div class="col-lg-5">
+                        <f:select items="${listClass}" path="id_class" id="id_Class" cssClass="form-control"/>
+                        <f:errors path="id_class" element="div" cssClass="alert alert-info" />
+                        </div>
+                    </div>
                         
-                            <h1 class="text-danger">PŘIDAT TŘÍDU</h1>
-                        
+                        <div class="form-group">
+                            
+                        <f:label path="file" class="col-lg-2 control-label">Fotografie:</f:label>
+                        <div class="col-lg-5">
+                            <f:input type="file" path="file" id="file" cssClass="form-control"/>
+                        <f:errors path="file" element="div" cssClass="alert alert-info" />
+                        </div>
+                    </div>
                    
                         <h4 class="text-info">Osobní údaje</h4>
                      <div class="form-group">
                             
-                        <f:label path="name" class="col-lg-2 control-label">Jméno<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <f:label path="name" class="col-lg-2 control-label">Jméno <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="name" id="name" cssClass="form-control"/>
                         <f:errors path="name" element="div" cssClass="alert alert-info" />
@@ -72,7 +99,7 @@
                     </div> 
                      <div class="form-group">
                             
-                        <f:label path="surname" class="col-lg-2 control-label">Přijmení<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <f:label path="surname" class="col-lg-2 control-label">Přijmení <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="surname" id="surname" cssClass="form-control"/>
                         <f:errors path="surname" element="div" cssClass="alert alert-info" />
@@ -85,18 +112,23 @@
                         <f:input path="dateOfBorn" id="dateOfBorn" cssClass="form-control"/>
                         <f:errors path="dateOfBorn" element="div" cssClass="alert alert-info" />
                         </div>
+                       
+                         
+                        <p class="text-info"><strong> Datum zadejte ve formátu dd.mm.rrrr</strong></p>
+                        
                     </div>
                    <div class="form-group">
                             
-                        <f:label path="identificationNumber" class="col-lg-2 control-label">Rodné číslo<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <f:label path="identificationNumber" class="col-lg-2 control-label">Rodné číslo <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="identificationNumber" id="identificationNumber" cssClass="form-control"/>
                         <f:errors path="identificationNumber" element="div" cssClass="alert alert-info" />
                         </div>
+                       
                     </div> 
                          <div class="form-group">
                             
-                        <f:label path="placeOfBorn" class="col-lg-2 control-label">Místo narození<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <f:label path="placeOfBorn" class="col-lg-2 control-label">Místo narození:</f:label>
                         <div class="col-lg-5">
                         <f:input path="placeOfBorn" id="placeOfBorn" cssClass="form-control"/>
                         <f:errors path="placeOfBorn" element="div" cssClass="alert alert-info" />
@@ -106,7 +138,7 @@
                         <h5 class="text-info">1. Zákonný zástupce</h5>
                         <div class="form-group">
                             
-                        <f:label path="motherName" class="col-lg-2 control-label">Jméno:</f:label>
+                        <f:label path="motherName" class="col-lg-2 control-label">Jméno <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="motherName" id="motherName" cssClass="form-control"/>
                         <f:errors path="motherName" element="div" cssClass="alert alert-info" />
@@ -114,7 +146,7 @@
                     </div>
                         <div class="form-group">
                             
-                        <f:label path="motherSurname" class="col-lg-2 control-label">Příjmení:</f:label>
+                        <f:label path="motherSurname" class="col-lg-2 control-label">Příjmení <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="motherSurname" id="motherSurname" cssClass="form-control"/>
                         <f:errors path="motherSurname" element="div" cssClass="alert alert-info" />
@@ -122,7 +154,7 @@
                     </div>   
                     <div class="form-group">
                             
-                        <f:label path="motherPhone" class="col-lg-2 control-label">Telefonní číslo:</f:label>
+                        <f:label path="motherPhone" class="col-lg-2 control-label">Telefonní číslo <span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="motherPhone" id="motherPhone" cssClass="form-control"/>
                         <f:errors path="motherPhone" element="div" cssClass="alert alert-info" />
@@ -211,7 +243,7 @@
                 Přidat studenta
             </button>
             <a class="btn btn-danger" href="<c:url value="/admin/students.htm"/>"> Zrušit</a>
-            <a class="btn btn-danger">Vymazat formulář</a>
+           <button class="btn btn-default" type="reset">Vymazat formulář</button>
                         
                         
                 </f:form>

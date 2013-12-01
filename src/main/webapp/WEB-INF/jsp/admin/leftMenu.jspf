@@ -5,7 +5,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
-<div class="jumbotron">
+<div class="jumbotron" style="background-color: steelblue; color: white">
 <div class="container">
     
     <h1>Administrace</h1>
@@ -18,7 +18,7 @@
         <li><a href="<s:url value="/admin/students.htm"/>" style="background-color: steelblue; color: white">Studenti</a></li>
         </c:if>
         <c:if test="${student!=true}">
-        <li  ><a href="<s:url value="/admin/students.htm"/>" >Studenti</a></li>
+        <li  ><a href="<s:url value="/admin/students.htm?page=1"/>" >Studenti</a></li>
         </c:if>
   <c:if test="${teacher}">
         <li><a href="<s:url value="/admin/teachers.htm"/>" style="background-color: steelblue; color: white">Učitelé</a></li>
@@ -30,13 +30,13 @@
         <li><a href="<s:url value="/admin/classes.htm"/>" style="background-color: steelblue; color: white">Třídy</a></li>
         </c:if>
         <c:if test="${clazz!=true}">
-        <li  ><a href="<s:url value="/admin/classes.htm"/>" >Třídy</a></li>
+        <li  ><a href="<s:url value="/admin/classes.htm?page=1"/>" >Třídy</a></li>
         </c:if>
   <c:if test="${subject}">
         <li><a href="<s:url value="/admin/subjects.htm"/>" style="background-color: steelblue; color: white">Předměty</a></li>
         </c:if>
         <c:if test="${subject!=true}">
-        <li  ><a href="<s:url value="/admin/subjects.htm"/>" >Předměty</a></li>
+        <li  ><a href="<s:url value="/admin/subjects.htm?page=1"/>" >Předměty</a></li>
         </c:if>
 </ul>
         

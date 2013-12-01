@@ -4,23 +4,31 @@
  */
 package cz.cvut.hotkomar.controller.admin;
 
+import com.sun.net.httpserver.HttpsServer;
 import cz.cvut.hotkomar.controller.AdminControllerImp;
 import cz.cvut.hotkomar.form.Form;
 import cz.cvut.hotkomar.form.PaginationForm;
 import cz.cvut.hotkomar.form.admin.NewTeacherForm;
 import cz.cvut.hotkomar.form.admin.ChangePassStudentForm;
+import cz.cvut.hotkomar.form.admin.EditTeacherForm;
+import cz.cvut.hotkomar.form.admin.FullTextForm;
 import cz.cvut.hotkomar.form.admin.NewStudentForm;
 import cz.cvut.hotkomar.model.entity.FileEntity;
 import cz.cvut.hotkomar.model.entity.Teacher;
 import cz.cvut.hotkomar.model.entity.UserType;
+import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
 import cz.cvut.hotkomar.service.file.Download;
 import cz.cvut.hotkomar.service.manager.FileMan;
 import cz.cvut.hotkomar.service.manager.TeacherMan;
 import cz.cvut.hotkomar.service.manager.UserTypeMan;
+import cz.cvut.hotkomar.service.message.FormMessage;
 import cz.cvut.hotkomar.service.pagination.Pagination;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -41,6 +49,33 @@ public class TeacherCon implements AdminControllerImp{
     private Download download;
     private UserTypeMan userTypeMan;
     private FileMan fileMan;
+    private DateFunction dateFunction;
+    private FormMessage message;
+            /**
+     *
+     * @return
+     */
+    @ModelAttribute("message")
+    public FormMessage getMessage() {
+        return message;
+    }
+
+    /**
+     *
+     * @param message
+     */
+    @Autowired
+    public void setMessage(FormMessage message) {
+        this.message = message;
+    }
+
+    
+    @Autowired
+    public void setDateFunction(DateFunction dateFunction) {
+        this.dateFunction = dateFunction;
+    }
+    
+    
 @Autowired
     public void setFileMan(FileMan fileMan) {
         this.fileMan = fileMan;
@@ -77,26 +112,58 @@ public class TeacherCon implements AdminControllerImp{
 
     @Override
     @RequestMapping (value="/admin/teachers.htm")
-    public String view(Integer page, ModelMap m) {
-        List <Teacher> list = teacherMan.findAll();
-       
-       //  pagination.setList(list);
+    public String view(@RequestParam(defaultValue ="1", value="page", required = true)Integer page, ModelMap m, HttpSession session) {
+       String attribute =(String)session.getAttribute("teacherFullText");
+        
+        List<Teacher>  list= null;
+        if(attribute==null){
+        list = teacherMan.findAll();
+        }else{
+            if(!attribute.isEmpty())            
+            {
+       list = teacherMan.findFullText(attribute);
+        System.out.println("finfFullText"+list);
+            }
+            else{
+                list = teacherMan.findAll();
+            }
+        }
+        
+        FullTextForm fullTextForm = new FullTextForm();
+        fullTextForm.setFullText(attribute);
+         pagination.setList(list);
         m.addAttribute("listOfTeachers", pagination.paginationList(list, page));
         m.addAttribute("teacher",true);
         m.addAttribute("pageForm",pagination.getPageForm());
+        m.addAttribute("form",fullTextForm);
       return "/admin/teacher/viewTeacher";
     }
-
+@RequestMapping(value = "/admin/teachersFulltext.htm")
+public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult errors, HttpSession session) {
+       session.setAttribute("teacherFullText", form.getFullText());
+               
+        return "redirect:teachers.htm";
+    }
     @Override
     @RequestMapping(value="/admin/addTeacher.htm")
     public String addGET(ModelMap m) {
         m.addAttribute("teacher",true);
-        m.addAttribute("form",new NewTeacherForm());
+        NewTeacherForm form = new NewTeacherForm();
+        form.setWagePerHour("0");
+        m.addAttribute("form",form);
         return"/admin/teacher/addTeacher";
     }
 
     @RequestMapping(value="/admin/adminNewTeacher.htm")
-    public String addPOST(@ModelAttribute("form") NewTeacherForm form, BindingResult errors, ModelMap m) {
+    public String addPOST(@Valid@ModelAttribute("form") NewTeacherForm form, BindingResult errors, ModelMap m) {
+        
+        if(errors.hasErrors())
+        {
+            m.addAttribute("teacher",true);
+        m.addAttribute("form",form);
+        return"/admin/teacher/addTeacher";
+        }
+        
         Teacher teacher = formToTeacher(form, new Teacher());
        
         Set<UserType> user = new HashSet<UserType>();
@@ -141,13 +208,13 @@ public class TeacherCon implements AdminControllerImp{
             //chyba
             System.out.println("učitel nebyl nalezen");
         }
-        int isAdmin = teacher.getIdType().size();
-        System.out.println("role učitele"+teacher.getIdType().size());
+       
+        
 //        m.addAttribute("last",lastTeacher);
 //        m.addAttribute("next", nextTeacher);
         m.addAttribute("teachers", teacher);
         m.addAttribute("teacher",true);
-        m.addAttribute("admin",isAdmin);
+        
        
         return"/admin/teacher/infoTeacher";
     }
@@ -161,7 +228,7 @@ public class TeacherCon implements AdminControllerImp{
             //chyba
             System.out.println("nenašel jsem id učitele");
         }
-        NewTeacherForm form = teacherToForm(teacher);
+        EditTeacherForm form = editTeacherToForm(teacher);
         form.setAdmin(isAdmin(teacher));
        
         m.addAttribute("form",form);
@@ -171,13 +238,20 @@ public class TeacherCon implements AdminControllerImp{
     }
 
   @RequestMapping(value = "/admin/adminEditTeacher.htm")
-    public String editPOST(@ModelAttribute("form") NewTeacherForm form, BindingResult errors,ModelMap m) {
+    public String editPOST(@Valid@ModelAttribute("form") EditTeacherForm form, BindingResult errors,ModelMap m) {
+      if(errors.hasErrors())
+      {
+          m.addAttribute("form",form);
+        m.addAttribute("teacher", true);
+      
+       return"/admin/teacher/editTeacher";
+      }
         Teacher findById = teacherMan.findById(form.getId());
         System.out.println("findById teacher"+findById.getId());
         if(findById==null){
             //chyba
             }
-        Teacher formToTeacher = formToTeacher(form,findById);
+        Teacher formToTeacher = editFormToTeacher(form,findById);
         formToTeacher.setId(form.getId());
         if(!form.getFile().isEmpty())
         {
@@ -192,7 +266,14 @@ public class TeacherCon implements AdminControllerImp{
 
     @RequestMapping(value = "/admin/passTeacher.htm")
     public String changePassGET(@RequestParam(value ="id", required = true) Long id, ModelMap m) {
-       m.addAttribute("form",new ChangePassStudentForm());
+        Teacher findById = teacherMan.findById(id);
+        if(findById==null)
+        {
+            //chyba
+        }
+        ChangePassStudentForm changePassStudentForm = new ChangePassStudentForm();
+        changePassStudentForm.setId(findById.getId());
+       m.addAttribute("form",changePassStudentForm);
        m.addAttribute("teacher", true);
         return"/admin/teacher/changePasswordT";
     }
@@ -210,10 +291,24 @@ public class TeacherCon implements AdminControllerImp{
         {
             //chyba
             System.out.println("učitel je null");
+            return"/admin/errorHups";
+        }
+        if(teacher.getId_class()!=null)
+        {
+            message.setNegativeMes("Uživalet "+teacher.getDegree()+" "+teacher.getName()+" "+teacher.getSurname()+" nemůže být vymazán. Je třídním učitelem.");
+            return"redirect:infoTeacher.htm?id="+teacher.getId();
+        }
+        for (Iterator<UserType> i=teacher.getIdType().iterator();i.hasNext();) {
+            UserType next = i.next();
+            if(next.getName().equals("ROLE_ADMIN"))
+            {
+                message.setNegativeMes("Uživalet "+teacher.getDegree()+" "+teacher.getName()+" "+teacher.getSurname()+" nemůže být vymazán. Je administrátorem.");
+            return"redirect:infoTeacher.htm?id="+teacher.getId();
+            }
         }
         teacherMan.visible(id, true);
         
-        return"redirect:teachers.htm";
+        return"redirect:teachers.htm?page="+page;
     }
     @RequestMapping(value="/admin/removePhoto.htm")
     public String removePhoto(@RequestParam(value="id", required=true)Long id)
@@ -233,10 +328,13 @@ public class TeacherCon implements AdminControllerImp{
     private Teacher formToTeacher(NewTeacherForm form, Teacher t)
     {
         Teacher teacher = t;
-       // teacher.setDateOfBorn(form.getDateOfBorn());
+        String[] splitDataString = dateFunction.splitDataString(form.getDateOfBorn());
+        
+       teacher.setDateOfBorn(dateFunction.setDate(Integer.parseInt(splitDataString[0]),Integer.parseInt(splitDataString[1]),Integer.parseInt(splitDataString[2])));
+       
         teacher.setFax(form.getFax());
         teacher.setIdentificationNumber(form.getIdentificationNumber());
-        teacher.setLogin(form.getLogin());
+        teacher.setLogin(form.getLogin().toLowerCase());
         teacher.setMail(form.getMail());
         teacher.setMobilePhone(form.getMobilePhone());
         teacher.setName(form.getName());
@@ -245,7 +343,65 @@ public class TeacherCon implements AdminControllerImp{
         teacher.setPlaceOfBorn(form.getPlaceOfBorn());
         teacher.setSurname(form.getSurname());
         teacher.setVisible(Boolean.TRUE);
-        //teacher.setDate_of_employ(form.getDateOfEmploy());
+       String [] splitDataString2=dateFunction.splitDataString(form.getDateOfEmploy());
+        teacher.setDate_of_employ(dateFunction.setDate(Integer.parseInt(splitDataString2[0]),Integer.parseInt(splitDataString2[1]),Integer.parseInt(splitDataString2[2])));
+        teacher.setDegree(form.getDegree());
+        teacher.setEducation(form.getEducation());
+        teacher.setEducation_consultant(form.getEducationConsultant());
+        if(!form.getWagePerHour().isEmpty())
+        {
+       teacher.setWagePerHour(Short.valueOf(form.getWagePerHour()));
+        }
+        else
+        {
+            teacher.setWagePerHour(new Short((short)0));
+        }
+        if(form.getAdmin())
+        {
+            UserType userType = userTypeMan.findByType("ROLE_ADMIN");
+            if(userType!=null){
+            Set<UserType> idType = teacher.getIdType();
+            idType.add(userType);
+            teacher.setIdType(idType);
+            }
+            else{
+                System.out.println("nenalezla jsem ROLE_ADMIN");
+            }
+        }
+        else
+        {
+            UserType userType = userTypeMan.findByType("ROLE_TEACHER");
+            if(userType!=null){
+            Set<UserType> idType = new HashSet<UserType> ();
+            idType.add(userType);
+            teacher.setIdType(idType);
+        }
+        }
+        
+        
+        
+        return teacher;
+    }
+    private Teacher editFormToTeacher(EditTeacherForm form, Teacher t)
+    {
+        Teacher teacher = t;
+        String[] splitDataString = dateFunction.splitDataString(form.getDateOfBorn());
+        
+       teacher.setDateOfBorn(dateFunction.setDate(Integer.parseInt(splitDataString[0]),Integer.parseInt(splitDataString[1]),Integer.parseInt(splitDataString[2])));
+       
+        teacher.setFax(form.getFax());
+        teacher.setIdentificationNumber(form.getIdentificationNumber());
+        
+        teacher.setMail(form.getMail());
+        teacher.setMobilePhone(form.getMobilePhone());
+        teacher.setName(form.getName());
+       // teacher.setPassword(form.getPassword());
+        teacher.setPhoneNumber(form.getPhoneNumber());
+        teacher.setPlaceOfBorn(form.getPlaceOfBorn());
+        teacher.setSurname(form.getSurname());
+        teacher.setVisible(Boolean.TRUE);
+       String [] splitDataString2=dateFunction.splitDataString(form.getDateOfEmploy());
+        teacher.setDate_of_employ(dateFunction.setDate(Integer.parseInt(splitDataString2[0]),Integer.parseInt(splitDataString2[1]),Integer.parseInt(splitDataString2[2])));
         teacher.setDegree(form.getDegree());
         teacher.setEducation(form.getEducation());
         teacher.setEducation_consultant(form.getEducationConsultant());
@@ -286,7 +442,7 @@ public class TeacherCon implements AdminControllerImp{
     private NewTeacherForm teacherToForm(Teacher teacher)
     {
         NewTeacherForm form = new  NewTeacherForm();
-       // teacher.setDateOfBorn(form.getDateOfBorn());
+       form.setDateOfBorn(dateFunction.getDateString(teacher.getDateOfBorn()));
         form.setId(teacher.getId());
         form.setFax(teacher.getFax());
         form.setIdentificationNumber(teacher.getIdentificationNumber());
@@ -299,7 +455,34 @@ public class TeacherCon implements AdminControllerImp{
         form.setPlaceOfBorn(teacher.getPlaceOfBorn());
         form.setSurname(teacher.getSurname());
         
-        //teacher.setDate_of_employ(form.getDateOfEmploy());
+        form.setDateOfEmploy(dateFunction.getDateString(teacher.getDate_of_employ()));
+        form.setDegree(form.getDegree());
+        form.setEducation(form.getEducation());
+        form.setEducationConsultant(teacher.getEducation_consultant());
+        form.setWagePerHour(teacher.getWagePerHour().toString());
+        
+        
+        
+        
+        return form;
+    }
+    private EditTeacherForm editTeacherToForm(Teacher teacher)
+    {
+        EditTeacherForm form = new  EditTeacherForm();
+       form.setDateOfBorn(dateFunction.getDateString(teacher.getDateOfBorn()));
+        form.setId(teacher.getId());
+        form.setFax(teacher.getFax());
+        form.setIdentificationNumber(teacher.getIdentificationNumber());
+        
+        form.setMail(teacher.getMail());
+        form.setMobilePhone(teacher.getMobilePhone());
+        form.setName(teacher.getName());
+       // teacher.setPassword(form.getPassword());
+        form.setPhoneNumber(teacher.getPhoneNumber());
+        form.setPlaceOfBorn(teacher.getPlaceOfBorn());
+        form.setSurname(teacher.getSurname());
+        
+        form.setDateOfEmploy(dateFunction.getDateString(teacher.getDate_of_employ()));
         form.setDegree(form.getDegree());
         form.setEducation(form.getEducation());
         form.setEducationConsultant(teacher.getEducation_consultant());

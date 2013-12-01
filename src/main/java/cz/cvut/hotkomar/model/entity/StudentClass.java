@@ -4,8 +4,10 @@
  */
 package cz.cvut.hotkomar.model.entity;
 
+import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,10 +15,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.Version;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 
 /**
@@ -33,7 +39,7 @@ public class StudentClass implements Serializable {
     @Column(name = "id_class")
     private Long id;
     // id of teacher who is class teacher
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne//(fetch = FetchType.EAGER)
     private Teacher id_teacher;
     //duration of study
     private Byte numberOfYears;
@@ -50,6 +56,29 @@ public class StudentClass implements Serializable {
     @Version
     private Integer version;
 
+    @OneToMany(mappedBy = "id_class")
+    //@LazyCollection(LazyCollectionOption.FALSE)
+    private List<Student> students;
+    
+    @OneToMany(mappedBy = "id_class",targetEntity = SubjectOfClass.class)
+    private List<SubjectOfClass> subjects;
+
+    public List<SubjectOfClass> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<SubjectOfClass> subjects) {
+        this.subjects = subjects;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+    
     /**
      *
      * @return
@@ -176,6 +205,17 @@ public class StudentClass implements Serializable {
      */
     public void setVersion(Integer version) {
         this.version = version;
+    }
+    
+    @Transient
+    public String getYear ()
+    {
+        if(yearOfFoundation!=null)
+        {
+            DateFunction dateFunction = new DateFunction();
+           return dateFunction.getYear(yearOfFoundation);
+        }
+        return "";
     }
     
     

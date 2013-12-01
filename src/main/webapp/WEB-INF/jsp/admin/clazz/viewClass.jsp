@@ -25,25 +25,89 @@
 </div>
         <div class="panel-body">
             <div class="row">
-            <div class="col-lg-10"></div>
-            <div class="col-lg-2">
-                <a href="<c:url value="addStudent.htm"/>" class="btn btn-primary "> <span  class=" glyphicon glyphicon-plus"></span> Přidat studenta</a>
+            
+                
+                    <div class="col-lg-9">
+                        <c:if test="${message.positiveFull}">
+    <div class="alert alert-success ">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        ${message.positiveMes}
+    </div>
+</c:if>
+<c:if test="${message.negativeFull}">
+    
+    <div class="alert alert-danger alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  ${message.negativeMes}
+</div>
+</c:if>
+                     
+                    </div>
+           <div class="col-lg-3">
+                <c:choose>
+                <c:when test="${teacherWithoutClass!=null}">
+                     
+                <a href="<c:url value="addClass.htm"/>" class="btn btn-primary "> <span  class=" glyphicon glyphicon-plus"></span> Přidat třídu</a>
+                </c:when>
+                <c:otherwise>
+                    
+            
+                <p class="text-danger"><strong>Nemůžete přidat třídu, nemáte volného učitele.</strong></p>
+
+                </c:otherwise> 
+                </c:choose>
+                 <c:if test="${listOfClass.size()>0}">
+                     <a href="<c:url value="up.htm?page=${pageForm.actualPage}"/>" class="btn btn-primary"><span class="glyphicon glyphicon-chevron-up"></span> posunout do dalšího ročníku</a>
+                    </c:if>
             </div>
             </div>
-            <p></p>
+            <p> </p>
+            
+            <c:choose>
+               
+                <c:when test="${listOfClass.size()>0}">
+                   
             <table class="table table-bordered table-striped table-hover">
+                <thead>
+                            <th>Třída</th> <th>Počet let</th><th>Rok zakončení</th><th>Třídní učitel</th><th>počet žáků</th><th>Info</th><th>Editovat</th><th>Smazat</th>
+                            
+            </thead>
+            <tfoot></tfoot>
+            <tbody>
+                <c:forEach items="${listOfClass}" var="classes">
                         <tr>
-                            <th>Přihlašovací jméno</th> <th>Jméno</th><th>Příjmení</th><th>Datum narození</th><th>Třída</th><th>Info</th><th>Editovat</th><th>Smazat</th><th>Změnit heslo</th>
+                            <td>${classes.nameNumber}.${classes.name}</td>
+                            <td>${classes.numberOfYears}</td>
+                            <td>${classes.year}</td>
+                            <td><a href="<c:url value="infoTeacher.htm?id=${classes.id_teacher.id}"/>" style="color:black">${classes.id_teacher.name} ${classes.id_teacher.surname}</a></td>
+                            <td>${classes.students.size()}</td>
+                            <td style="text-align: center" ><a class="btn btn-info" href="<c:url value="infoClass.htm?id=${classes.id}"/>" ><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <td style="text-align: center"><a class="btn btn-success"href="editClass.htm?id=${classes.id}"><span class="glyphicon glyphicon-edit"></span></a></td>
+                            <td style="text-align: center"><a class="btn btn-danger"href="<c:url value="removeClass.htm?id=${classes.id}&page=${pageForm.actualPage}"/>"><span class="glyphicon glyphicon-remove"></span></a></td>
                             
                         </tr>
-                        <tr>
-                            <td>login</td><td>Karel</td><td>Novák</td><td>1.1.1990</td><td>1.A</td>
-                            <td style="text-align: center" ><a class="btn btn-info" href="#" ><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                            <td style="text-align: center"><a class="btn btn-success"href="#"><span class="glyphicon glyphicon-edit"></span></a></td>
-                            <td style="text-align: center"><a class="btn btn-danger"href="#"><span class="glyphicon glyphicon-remove"></span></a></td>
-                            <td style="text-align: center"><a class="btn btn-default" style="background: black; color: white"  href="#"><span class="glyphicon glyphicon-wrench"></span></a></td>
-                        </tr>
+                </c:forEach>
+            </tbody>
 </table>
+           <c:if test="${pageForm.actualPage>=1}">
+            <c:if test="${pageForm.actualPage>1}">
+            <a href="<s:url value="/admin/classes.htm?page=1"/>" style="color: black"> <span class="glyphicon glyphicon-fast-backward"> </span></a>
+            
+            <a href="<s:url value="/admin/classes.htm?page=${pageForm.actualPage-1}"/>"style="color: black"><span class="glyphicon glyphicon-backward"></span></a>
+            </c:if>
+            strana ${pageForm.actualPage} z ${pageForm.countOfPage}
+            <c:if test="${pageForm.actualPage<(pageForm.countOfPage)}">
+                <a href="<c:url value="/admin/classes.htm?page=${pageForm.actualPage+1}"/>" style="color: black"/> <span class="glyphicon glyphicon-forward"> </span></a>
+            
+            
+        <a href="<c:url value="/admin/classes.htm?page=${pageForm.countOfPage}"/>" style="color:black">
+            <span class="glyphicon glyphicon-fast-forward"></span></a>
+            </c:if>
+        </c:if>
+                </c:when>
+                <c:otherwise> <p class="alert alert-warning"> Nemáte žádné třídy.</p>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
     

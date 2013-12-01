@@ -29,13 +29,13 @@ public class SubjectOfClass implements Serializable {
 @GeneratedValue(strategy= GenerationType.IDENTITY)
 @Column(name="id_subjectOfClass")
 private Long id;
-@ManyToOne(fetch= FetchType.EAGER)
+@ManyToOne//(fetch= FetchType.EAGER)
 private Subject id_subject;
 //id class, where is subject teached
-@ManyToOne(fetch= FetchType.EAGER)
+@ManyToOne//(fetch= FetchType.EAGER)
 private StudentClass id_class;
 //id teacher who teach subject
-@ManyToOne(fetch= FetchType.EAGER)
+@ManyToOne//(fetch= FetchType.EAGER)
 private Teacher id_teacher;
 //when admin delete subject of class, visible will be false
 @Type(type="true_false")

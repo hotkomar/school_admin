@@ -1,0 +1,50 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+
+<%@taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="f" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="s" uri="http://www.springframework.org/tags" %>
+
+
+<f:form  class="form-horizontal" commandName="form" action="${post}" method="POST">
+                    
+                        
+                        <f:errors path="*" element="div" cssClass="alert alert-info" />
+                        <div class="form-group">
+                            
+                            
+                            <f:label path="actualPass" class="col-lg-3 control-label">Aktuální heslo <strong><span class="glyphicon glyphicon-asterisk"></span></strong>:</f:label>
+                        <div class="col-lg-5">
+                        <f:password path="actualPass" id="actualPass" cssClass="form-control"/>
+                        <f:errors path="actualPass" element="div" cssClass="alert alert-info" />
+                        </div>
+                    </div>
+                         
+                        <div class="form-group">
+                           
+                            <f:label path="newPass" class="col-lg-3 control-label">Nové heslo <strong><span class="glyphicon glyphicon-asterisk"></span></strong>:</f:label>
+                        <div class="col-lg-5">
+                        <f:password path="newPass" id="mobilePhone" cssClass="form-control"/>
+                        <f:errors path="newPass" element="div" cssClass="alert alert-info" />
+                        </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            
+                        <f:label path="newPass2" class="col-lg-3 control-label">Opakujte nové heslo  <strong><span class="glyphicon glyphicon-asterisk"></span></strong>:</f:label>
+                        <div class="col-lg-5">
+                        <f:password path="newPass2" id="newPass2" cssClass="form-control"/>
+                        <f:errors path="newPass2" element="div" cssClass="alert alert-info" />
+                        </div>
+                    </div>
+                        
+                        
+                           
+                        <button class="btn btn-primary" type="submit">
+               Změnit heslo
+            </button>
+            <a class="btn btn-danger" href="<c:url value="personInfo.htm"/>">Zpět na profil</a>
+            <button class="btn btn-default" type="reset">Vymazat formulář</button>
+                        
+                        
+                </f:form>

@@ -4,10 +4,12 @@
  */
 package cz.cvut.hotkomar.model.entity;
 
+import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,9 +18,17 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 
 
 
@@ -29,21 +39,25 @@ import org.hibernate.annotations.Type;
 @MappedSuperclass
 public abstract class AbstractUser implements Serializable{
     //user registration identification number
+    @DocumentId(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")
     private Long id;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany//(fetch = FetchType.EAGER)
     private Set<UserType> idType = new HashSet<UserType>();
     // name for log in
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String login;
     // password for log in
     private String password;
     //user's mail address
     private String mail;
     //user name
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
     //user surname
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String surname;
     //user identification number
     private String identificationNumber;
@@ -58,11 +72,16 @@ public abstract class AbstractUser implements Serializable{
     private String phoneNumber;
     // number of fax
     private String fax;
+    // user's photo
+    @IndexedEmbedded
+    @OneToOne//(fetch = FetchType.EAGER)
+    private FileEntity photo;
     // visible is false, when admin delete user
     @Type(type = "true_false")
     private Boolean visible;
     @Version
     private Integer version;
+    
 
     /**
      *
@@ -206,6 +225,7 @@ public abstract class AbstractUser implements Serializable{
      */
     public void setDateOfBorn(Calendar dateOfBorn) {
         this.dateOfBorn = dateOfBorn;
+       
     }
 
     /**
@@ -303,6 +323,25 @@ public abstract class AbstractUser implements Serializable{
     public void setVersion(Integer version) {
         this.version = version;
     }
+
+    public FileEntity getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(FileEntity photo) {
+        this.photo = photo;
+    }
+@Transient
+    public String getBorn() {
+        if(dateOfBorn!=null)
+        {
+            DateFunction dateFunction = new DateFunction();
+          return  dateFunction.getDateString(dateOfBorn);
+        }
+        return "";
+    }
+
+    
     
     
 }

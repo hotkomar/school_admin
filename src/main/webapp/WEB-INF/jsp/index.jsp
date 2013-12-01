@@ -36,7 +36,7 @@
 <a class="btn btn-large btn-info"href="<s:url value="/student/personInfo.htm"/>">přihlásit jako student</a>
 <a class="btn btn-large btn-danger" href="<s:url value="/teacher/personInfo.htm"/>">přihlásit jako učitel </a>
 <a class="btn btn-large btn-success" href="<s:url value="/parent/classification.htm"/>">přihlásit jako rodič </a> <br /> <br />
-<a class="btn btn-large btn-warning" href="<s:url value="/admin/students.htm"/>">přihlásit jako administrátor </a>
+<a class="btn btn-large btn-warning" href="<s:url value="/admin/students.htm?page=1"/>">přihlásit jako administrátor </a>
         
 </div>
 <%@include file="footer.jspf" %>

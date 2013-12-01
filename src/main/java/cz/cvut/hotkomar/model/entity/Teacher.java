@@ -4,21 +4,26 @@
  */
 package cz.cvut.hotkomar.model.entity;
 
+import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Indexed;
 
 /**
  *
  * @author Marie Hotkova
  */
 @Entity
+@Indexed
 @Table (name="TEACHER")
 public class Teacher extends AbstractUser{
    //the highest degree, which teacher has
@@ -29,13 +34,14 @@ public class Teacher extends AbstractUser{
     //hourly wage of a teacher
     private Short wagePerHour;
     //highest education, which teacher has
+    @Column(name = "education",length=1024)
     private String education;
     // date when the teacher was employed
     @Temporal(javax.persistence.TemporalType.DATE)
     private Calendar date_of_employ;
-    @OneToMany(mappedBy = "id_teacher", targetEntity = SubjectOfClass.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "id_teacher", targetEntity = SubjectOfClass.class)
     private List<SubjectOfClass> subjClass;
-    @OneToOne(mappedBy="id_teacher",fetch = FetchType.EAGER)
+    @OneToOne(mappedBy="id_teacher")
     private StudentClass id_class;
 
     /**
@@ -148,6 +154,16 @@ public class Teacher extends AbstractUser{
      */
     public void setId_class(StudentClass id_class) {
         this.id_class = id_class;
+    }
+    @Transient
+    public String getEmploy()
+    {
+        if(date_of_employ!=null)
+        {
+            DateFunction dateFunction = new DateFunction();
+            return dateFunction.getDateString(date_of_employ);
+        }
+        return "";
     }
  
 }

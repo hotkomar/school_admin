@@ -54,10 +54,12 @@
 	<prop key="hibernate.show_sql">true</prop>
 	<prop key="hibernate.hbm2ddl.auto">create</prop> <!-- create/create-drop /validate-->
 	<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> 
-        <prop key="hibernate.current_session_context_class">thread</prop>
+        <!--<prop key="hibernate.current_session_context_class">thread</prop>-->
         <prop key="hibernate.query.substitutions">true 1, false 0</prop>
     </props>
   </property>
+  
+  
   
 </bean>
 
@@ -73,7 +75,7 @@
     <property name="sessionFactory" ref="sessionFactory" />
 </bean>
 
-<tx:annotation-driven transaction-manager="transactionManager" />
+<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 <!----> 
 <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
      <constructor-arg value="256"/>

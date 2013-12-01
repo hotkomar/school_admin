@@ -10,7 +10,11 @@
 </div>
 
 
- <script src="<spring:url value="/dist/js/bootstrap.min.js"/>"></script>
+
+<script src="<spring:url value="/dist/js/bootstrap.js"/>"></script>
+ 
+ 
+
  
 </body>
 

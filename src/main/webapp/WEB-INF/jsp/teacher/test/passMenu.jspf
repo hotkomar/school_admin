@@ -1,0 +1,26 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+<div class="container">
+    <div class="row">
+    <ul class="nav nav-tabs nav-justified">
+        <c:if test="${hasPass==true}">
+        <c:if test="${change}">
+        <li><a href="<s:url value="/teacher/changeTestPass.htm?id=${idTest}"/>" style="background-color: steelblue; color: white">Zadat nové/změnit heslo testu</a></li>
+        </c:if>
+        <c:if test="${change!=true}">
+        <li  ><a href="<s:url value="/teacher/changeTestPass.htm?id=${idTest}"/>" >Zadat nové/změnit heslo testu</a></li>
+        </c:if>
+        
+  <c:if test="${view}">
+        <li><a href="<s:url value="viewPass.htm?id=${idTest}"/>" style="background-color: steelblue; color: white">Zobrazit/Smazat heslo</a></li>
+        </c:if>
+        <c:if test="${view!=true}">
+        <li  ><a href="<s:url value="viewPass.htm?id=${idTest}"/>" >Zobrazit/Smazat heslo</a></li>
+        </c:if>
+        </c:if>
+        
+</ul>
+        
+        <br/>  
+    </div>     
+</div>

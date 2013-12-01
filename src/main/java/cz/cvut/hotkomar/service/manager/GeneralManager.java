@@ -5,6 +5,7 @@
 package cz.cvut.hotkomar.service.manager;
 
 //import cz.cvut.hotkomar.service.message.FormMessage;
+import cz.cvut.hotkomar.service.message.FormMessage;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
@@ -30,22 +31,26 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
     /**
      * Information message about action for user
      */
-   // protected FormMessage message;
-    private Class<E> entityClass; //reflexe
+    protected FormMessage message;
+    private Class<? extends E> entityClass; //reflexe
 
+    public void setEntityClass(Class<? extends E> clazz){
+        this.entityClass = clazz;
+    }
+    
     /**
      *
      * @param message
      */
-//    @Autowired
-//    public void setMessage(FormMessage message) {
-//        this.message = message;
-//    }
+    @Autowired
+    public void setMessage(FormMessage message) {
+        this.message = message;
+    }
 
     GeneralManager() {
         //return Class name
-        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-        this.entityClass = (Class<E>) genericSuperclass.getActualTypeArguments()[0];
+//        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+//        this.entityClass = (Class<E>) genericSuperclass.getActualTypeArguments()[0];
     }
     //comunication with spring
 
@@ -66,9 +71,9 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      */
     protected Session getSession() {
         Session s = sessionFactory.getCurrentSession();
-        if (s == null) {
-            s = sessionFactory.openSession();
-        }
+//        if (s == null) {
+//            s = sessionFactory.openSession();
+//        }
 
         return s;
 
@@ -82,23 +87,24 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      */
     public void add(E entity, boolean b) {
         Session session = getSession();
-        Transaction tx = null;
+        //Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            //tx = session.beginTransaction();
             session.save(entity);
-            tx.commit();
+            session.flush();
+            //tx.commit();
             if (b) {
-//                message.setPositiveMes("uloženo");
-                System.out.println("ulozena "+entity.getClass().getName());
+               message.setPositiveMes("Uloženo");
+                System.out.println("Ulozena "+entity.getClass().getName());
             }
 
         } catch (HibernateException e) {
             e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-            }
+//            if (tx != null) {
+//                tx.rollback();
+//            }
             if (b) {
-//                message.setNegativeMes("uložení se nepovedlo :(");
+                message.setNegativeMes("Uložení se nepovedlo :(");
             }
 
 
@@ -112,27 +118,26 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      * @param b
      */
     public void edit(E entity, boolean b) {
-        Session session = sessionFactory.openSession();//getSession();
-        Transaction tx = null;
+        Session session = getSession();
+        //Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            //tx = session.beginTransaction();
 
             session.update(entity);
-
-            tx.commit();
+            session.flush();
+            //tx.commit();
             if (b) {
-//                message.setPositiveMes("změněno");
+                message.setPositiveMes("Změněno");
             }
         } catch (HibernateException e) {
             e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-//                message.setNegativeMes("editace se nepovedla :(");
-            }
-        } finally {
-            session.close();
+//            if (tx != null) {
+//                tx.rollback();
+                message.setNegativeMes("Editace se nepovedla :(");
+//            }
+        } 
 
-        }
+        
     }
 
     /**
@@ -142,20 +147,20 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      */
     public void delete(E entity) {
         Session session = getSession();
-        Transaction tx = null;
+//        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+//            tx = session.beginTransaction();
             session.delete(entity);
-
-            tx.commit();
-//            message.setPositiveMes("smazáno");
+            session.flush();
+//            tx.commit();
+            message.setPositiveMes("Smazáno");
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-//                message.setNegativeMes("nepovedlo se smazání :(");
-            }
+//            if (tx != null) {
+//                tx.rollback();
+                message.setNegativeMes("Nepovedlo se smazání :(");
+//            }
         }
     }
 
@@ -168,27 +173,27 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      */
     public void visible(Long id, boolean b) {
         Session session = getSession();
-        Transaction tx = null;
+//        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+//            tx = session.beginTransaction();
             String hql = "UPDATE " + entityClass.getName() + " set visible = :visible WHERE id = :entity_id";
             Query query = session.createQuery(hql);
             query.setParameter("visible", false);
             query.setParameter("entity_id", id);
             int result = query.executeUpdate();
 //            System.out.println("Rows affected: " + result);
-            tx.commit();
+//            tx.commit();
             if (b) {
-//                message.setPositiveMes("smazáno");
+                message.setPositiveMes("Smazáno");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-                if (!b) {
-//                    message.setNegativeMes("smazání se nepovedlo :( ");
-                }
-            }
+//            if (tx != null) {
+//                tx.rollback();
+//                if (!b) {
+                  message.setNegativeMes("Smazání se nepovedlo :( ");
+//                }
+//            }
         }
     }
 
@@ -200,15 +205,15 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      */
     public E findById(Long id) {
         Session session = getSession();
-        Transaction tx = null;
+//        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+//            tx = session.beginTransaction();
             Query query = session.createQuery("SELECT e FROM " + entityClass.getName() + " as e where e.id= :id AND e.visible=true");
             query.setParameter("id", id);
 
             List<E> list = query.list();
 
-            tx.commit();
+//            tx.commit();
 
             if (list.isEmpty()) {
                 return null;
@@ -217,9 +222,9 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-            }
+//            if (tx != null) {
+//                tx.rollback();
+//            }
             return null;
         }
 
@@ -232,21 +237,21 @@ public abstract class GeneralManager<E> implements GeneralManImp<E> {
      */
     public List<E> findAll() {
         Session session = getSession();
-        Transaction tx = null;
+//        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+//            tx = session.beginTransaction();
             Query query = session.createQuery("SELECT e FROM " + entityClass.getName() + " as e where e.visible = true ");
             List<E> list = query.list();
 
-            tx.commit();
+//            tx.commit();
 
             return list;
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-            }
+//            if (tx != null) {
+//                tx.rollback();
+//            }
             return new LinkedList<E>();
         }
     }

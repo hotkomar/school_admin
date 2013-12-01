@@ -269,7 +269,6 @@ table {
   .table td,
   .table th {
     background-color: #fff !important;
-  
   }
   .btn > .caret,
   .dropup > .btn > .caret {
@@ -6802,8 +6801,5 @@ td.visible-print {
   th.hidden-print,
   td.hidden-print {
     display: none !important;
-  }
-  td{
-      text-align: center;
   }
 }

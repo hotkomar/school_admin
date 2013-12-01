@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table (name="STUDENTPARENT")
 public class StudentParent extends AbstractUser{
-     @ManyToOne(fetch = FetchType.EAGER)
+     @ManyToOne//(fetch = FetchType.EAGER)
     private Student student;
 
     /**
