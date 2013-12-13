@@ -20,7 +20,7 @@
     <div class=" panel panel-default">
 <div class="panel-heading">
     
-    <h2 class="panel-title">  Změnit heslo testu</h2>
+    <h2 class="panel-title">  Změnit heslo testu </h2>
   
    
     
@@ -76,7 +76,7 @@
                         <button class="btn btn-primary" type="submit">
                Potvrdit
             </button>
-            <a class="btn btn-danger" href="<c:url value="infoTest.htm?id=${form.id}"/>">Zrušit</a>
+            <a class="btn btn-danger" href="<c:url value="infoTest.htm?test=${form.id}"/>">Zrušit</a>
             <button class="btn btn-default" type="reset">Vymazat heslo</button>
                         
                         

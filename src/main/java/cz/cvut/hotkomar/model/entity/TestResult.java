@@ -29,10 +29,10 @@ public class TestResult implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_testRestul")
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     private Test test;
     private Double percent;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     private Student student;
     @Type(type = "true_false")
     private Boolean visible;
@@ -43,7 +43,11 @@ public class TestResult implements Serializable{
     private Calendar testDate;
     @Type(type = "true_false")
     private Boolean actualMark;
-
+    @Type(type = "true_false")
+    private Boolean webTest;
+    @ManyToOne()
+    private Teacher teacher;
+    private Short classified;
     public Long getId() {
         return id;
     }
@@ -114,6 +118,30 @@ public class TestResult implements Serializable{
 
     public void setActualMark(Boolean actualMark) {
         this.actualMark = actualMark;
+    }
+
+    public void setWebTest(Boolean webTest) {
+        this.webTest = webTest;
+    }
+
+    public Boolean getWebTest() {
+        return webTest;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public Short getClassified() {
+        return classified;
+    }
+
+    public void setClassified(Short classified) {
+        this.classified = classified;
     }
 
     

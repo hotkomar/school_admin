@@ -56,12 +56,25 @@
             </p>
             <div class="container">
                 <div class="row">
+                    <div class="col-lg-10">
+                        <a href="<c:url value="/teacher/classification/classView.htm?idSubject=${idSubject}"/>" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span><strong> Zpět na seznam tříd</strong></a>
+                    </div>
+                    <p></p>
+                    <div class="col-lg-2">
+                        <c:if test="${students.size()>0}">
+                            <a href="<c:url value="#"/>" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span><strong> Přidat známku</strong> </a>
+                        </c:if>
+                        
+                    </div>
+                </div>
+                <div class="row">
                     
                     <c:choose>
                         <c:when test="${students.size()>0}">
+                            
                             <div class="col-lg-2"> 
                     <table class="table table-bordered table-hover">
-                        <thead><tr>
+                        <thead ><tr style="background-color: steelblue; color: white">
                                 <th>Číslo</th><th>Login</th><th>Jméno</th><th>Příjmení</th><th>Info</th>
                             </tr></thead>
                         <tfoot></tfoot>
@@ -69,10 +82,20 @@
                             <c:forEach items="${students}" var="item" varStatus="iter">
                                 <tr>
                                     <td>${iter.index+1}</td><td>${item.login}</td>
-                                    <td>${item.name}</td><td>${item.surname}</td>
+                                    <td>${item.name} </td><td>${item.surname} </td>
                                     <td>
-                                        <a href="<c:url value="studentInfo.htm?idSubject=${idSubject}&idStudent=${item.id}"/>" class="btn btn-info"><span class="glyphicon glyphicon-info-sign"></span></a>
-                                    </td>
+                                        <c:choose>
+                                            <c:when test="${iter.index==0}">
+                                        <a href="<c:url value="studentInfo.htm?idSubject=${idSubject}&idStudent=${item.id}&next=${students[iter.index+1].id}&previous=${students[iter.index].id}"/>" class="btn btn-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                            </c:when>
+                                            <c:when test="${iter.index==(students.size()-1)}">
+                                            <a href="<c:url value="studentInfo.htm?idSubject=${idSubject}&idStudent=${item.id}&next=${students[iter.index].id}&previous=${students[iter.index-1].id}"/>" class="btn btn-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                            <a href="<c:url value="studentInfo.htm?idSubject=${idSubject}&idStudent=${item.id}&next=${students[iter.index+1].id}&previous=${students[iter.index-1].id}"/>" class="btn btn-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        </td>
                                 </tr>
                             </c:forEach>
                         </tbody>

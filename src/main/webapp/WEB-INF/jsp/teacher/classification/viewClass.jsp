@@ -19,7 +19,7 @@
     <div class=" panel panel-default">
 <div class="panel-heading">
     
-    <h2 class="panel-title">Klasifikace</h2>
+    <h2 class="panel-title">Klasifikace <c:if test="${classList.size()!=0}">- ${classList[0].id_subject.name}</c:if> </h2>
   
    
     
@@ -61,7 +61,7 @@
                         <c:when test="${classList.size()>0}">
                             <div class="col-lg-2"> 
                     <table class="table table-bordered table-hover">
-                        <thead><tr>
+                        <thead><tr style="background-color: steelblue; color: white">
                                 <th>Číslo</th><th>Třída</th><th>Info</th>
                             </tr></thead>
                         <tfoot></tfoot>

@@ -93,7 +93,7 @@
                         <button class="btn btn-primary" type="submit">
                Změnit heslo
             </button>
-            <a class="btn btn-danger" href="<c:url value="tests.htm?id=${form.id}"/>">Zrušit</a>
+            <a class="btn btn-danger" href="<c:url value="infoTest.htm?test=${form.id}"/>">Zrušit</a>
             <button class="btn btn-default" type="reset">Vymazat formulář</button>
                         
                         

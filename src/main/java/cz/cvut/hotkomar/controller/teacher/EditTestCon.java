@@ -111,14 +111,14 @@ public class EditTestCon {
     public String editTestGET(ModelMap m, HttpSession session, @ModelAttribute("form") EditTestForm form, @RequestParam(value = "id", required = true) Long id) {
 
         Test findById = testMan.findById(id);
-        if (findById == null) {
+        if (findById == null || findById.getTaught()) {
             return "admin/errorHups";
         }
         List<TestResult> findByTest = testResultMan.findByTest(findById);
         if(!findByTest.isEmpty())
         {
             message.setNegativeMes("Test nelze editovat, jestliže byl již vypracován nekterým ze studentů.");
-            return "redirect:infoTest/results.htm?id="+findById.getId();
+            return "redirect:infoTest/results.htm?test="+findById.getId();
         }
         System.out.println("*********************************************************");
         System.out.println("*********************************************************");

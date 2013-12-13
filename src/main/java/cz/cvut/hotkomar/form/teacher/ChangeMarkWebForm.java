@@ -11,12 +11,9 @@ import java.util.Map;
  *
  * @author Maru
  */
-public class ChangeMarkForm {
-
+public class ChangeMarkWebForm {
    private Long id;
    private Short mark;
-   private String markDate;
-   private Short classified;
   Map<Short,Short> map = new HashMap<Short, Short>();
 
     public Long getId() {
@@ -47,24 +44,5 @@ public class ChangeMarkForm {
        map.put(Short.valueOf("5"),Short.valueOf("5"));
        
     }
-
-    public Short getClassified() {
-        return classified;
-    }
-
-    public void setClassified(Short classified) {
-        this.classified = classified;
-    }
-
-    public String getMarkDate() {
-        return markDate;
-    }
-
-    public void setMarkDate(String markDate) {
-        this.markDate = markDate;
-    }
-
-
    
-      
 }

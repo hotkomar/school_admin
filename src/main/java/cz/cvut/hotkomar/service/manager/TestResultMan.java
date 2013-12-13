@@ -13,6 +13,7 @@ import cz.cvut.hotkomar.model.entity.Test;
 import cz.cvut.hotkomar.model.entity.TestResult;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -247,6 +248,80 @@ public class TestResultMan extends GeneralManager<TestResult>{
             query.setParameter("id_subject", subject);
             query.setParameter("first", first);
             query.setParameter("last",last);
+              list = query.list();
+           // TestResult t= ((TestResult)list.get(0));
+             System.out.println("DÉLKA LISTKU "+list.size());
+            
+             System.out.println("is empty "+list.isEmpty());
+            
+            
+           
+         //  System.out.println("vracím : "+list.size());
+//          tx.commit();
+      } catch (Exception e) {
+//          if(tx != null){ tx.rollback();}
+          e.printStackTrace();
+          System.out.println("bléééééééééééééééééééééééééééééééééééé");
+      }
+      return list;
+        
+        
+       
+
+    }  
+   
+   public List<TestResult> findByStudentBetween(  Student student, Subject subject, Date first, Date last) {
+        
+        System.out.println("jsem ve třídě findByClass_id");
+      Session session= getSession();
+      List<TestResult> list = new ArrayList<TestResult>();
+//      Transaction tx=null;
+     
+      try {
+        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE (u.testDate BETWEEN :first AND :last) AND u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true");
+            
+            /*u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true AND u.testDate*/
+            query.setParameter("id_student", student);
+            query.setParameter("id_subject", subject);
+            query.setParameter("first", first);
+            query.setParameter("last",last);
+              list = query.list();
+           // TestResult t= ((TestResult)list.get(0));
+             System.out.println("DÉLKA LISTKU "+list.size());
+            
+             System.out.println("is empty "+list.isEmpty());
+            
+            
+           
+         //  System.out.println("vracím : "+list.size());
+//          tx.commit();
+      } catch (Exception e) {
+//          if(tx != null){ tx.rollback();}
+          e.printStackTrace();
+          System.out.println("bléééééééééééééééééééééééééééééééééééé");
+      }
+      return list;
+        
+        
+       
+
+    }  
+   
+   public List<TestResult> findByStudentBetweenStringDate(  Student student, Subject subject, String first, String last) {
+        
+        System.out.println("jsem ve třídě findByClass_id");
+      Session session= getSession();
+      List<TestResult> list = new ArrayList<TestResult>();
+//      Transaction tx=null;
+     
+      try {
+        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE u.testDate= 2013-01-01 AND u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true");
+            
+            /*u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true AND u.testDate*/
+            query.setParameter("id_student", student);
+            query.setParameter("id_subject", subject);
+           // query.setParameter("first", first);
+          //  query.setParameter("last",last);
               list = query.list();
            // TestResult t= ((TestResult)list.get(0));
              System.out.println("DÉLKA LISTKU "+list.size());

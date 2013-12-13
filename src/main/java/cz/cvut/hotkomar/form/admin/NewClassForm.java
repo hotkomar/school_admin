@@ -32,12 +32,12 @@ public class NewClassForm {
     private Long classHead;
 
     
-    @AssertTrue(message="Číslo ročníku musí být menší celkové délce studia. ")
+    @AssertTrue(message="Číslo ročníku musí být menší nebo roven celkové délce studia. ")
     private boolean getTest()
     {
         if(numberName!=null && numberOfYears!=null )
         {
-            if(Byte.valueOf(numberName) <numberOfYears)
+            if(Byte.valueOf(numberName) <=numberOfYears)
             {
                
                 return true;

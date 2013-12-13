@@ -25,9 +25,9 @@
                 
                 </div>
             <div class="col-lg-5">
-                <a href="<c:url value="editTest.htm?id=${tests.id}"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat záznam</strong></a>
+                <a href="<c:url value="/teacher/editTest.htm?id=${tests.id}"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat záznam</strong></a>
                 <a href="<c:url value="/teacher/removeTest.htm?id=${tests.id}"/>" class=" btn btn-danger "> <span class="glyphicon glyphicon-remove"></span><strong> Smazat záznam</strong></a>
-                <a href="<c:url value="changeTestPass.htm?id=${tests.id}"/>" class=" btn btn-default " style="background: black;color: white"> <span class="glyphicon glyphicon-wrench"></span><strong> Heslo</strong></a>
+                <a href="<c:url value="/teacher/changeTestPass.htm?id=${tests.id}"/>" class=" btn btn-default " style="background: black;color: white"> <span class="glyphicon glyphicon-wrench"></span><strong> Heslo</strong></a>
                         
             </div>
             </div>

@@ -210,7 +210,7 @@ public class ClassCon implements AdminControllerImp {
              return "admin/errorHups";
         }
         Map<Long, String> teacherWithoutClass = getTeacherWithoutClass();
-        teacherWithoutClass.put(findById.getId(), findById.getId_teacher().getName() + " " + findById.getId_teacher().getSurname());
+        teacherWithoutClass.put(findById.getId_teacher().getId(), findById.getId_teacher().getName() + " " + findById.getId_teacher().getSurname());
         NewClassForm classToForm = classToForm(new NewClassForm(), findById);
         m.addAttribute("form", classToForm);
         m.addAttribute("clazz", true);
@@ -219,24 +219,29 @@ public class ClassCon implements AdminControllerImp {
     }
     @RequestMapping(value = "/admin/adminEditClass.htm")
     public String editPOST(@Valid @ModelAttribute("form") NewClassForm form, BindingResult errors, ModelMap m)
-    {if(errors.hasErrors())
     {
-        m.addAttribute("teacherWithoutClass", getTeacherWithoutClass());
-            m.addAttribute("clazz", true);
-            m.addAttribute("form", form);
-            return "admin/clazz/addClass";
-    }
-        
         StudentClass findById = studentClassMan.findById(form.getId());
         if(findById==null)
         {   
-            
+            System.out.println("nenašel jsem třídu");
             return"/admin/errorHups";
         }
+        if(errors.hasErrors())
+    {
+        Map<Long, String> teacherWithoutClass = getTeacherWithoutClass();
+        teacherWithoutClass.put(findById.getId_teacher().getId(), findById.getId_teacher().getName() + " " + findById.getId_teacher().getSurname());
+        m.addAttribute("listClassHead", teacherWithoutClass);
+            m.addAttribute("clazz", true);
+            m.addAttribute("form", form);
+            return "admin/clazz/editClass";
+    }
+        
+       
+        
         StudentClass formToClass = formToClass(form, findById);
         if(formToClass==null)
         {
-            
+            System.out.println("nevrátil jsem formulář");
             return"/admin/errorHups";
         }
         studentClassMan.edit(formToClass, true);
@@ -409,6 +414,7 @@ public String upClass (@RequestParam (defaultValue ="1" ,value = "page", require
         clazz.setName(form.getName());
         System.out.println("Byte.valueOf(form.getNumberName())"+form.getNumberName());
        clazz.setNameNumber(Byte.valueOf(form.getNumberName()));
+        System.out.println("headClass"+form.getClassHead());
         Teacher findById = teacherMan.findById(form.getClassHead());
         if (findById == null) {
             System.out.println("Při vytváření nové třídy nebyl nalezen vybraný vyučující");
@@ -421,12 +427,31 @@ public String upClass (@RequestParam (defaultValue ="1" ,value = "page", require
         
        clazz.setNumberOfYears(new Byte(form.getNumberOfYears()));
         clazz.setVisible(Boolean.TRUE);
-       if(Calendar.getInstance().get(Calendar.YEAR)>7){
-         clazz.setYearOfFoundation(dateFunction.setDate(1, 9,(int)(Calendar.getInstance().get(Calendar.YEAR)+(form.getNumberOfYears()- Integer.parseInt(form.getNumberName())))));
-       }
-       else{
-           clazz.setYearOfFoundation(dateFunction.setDate(1, 9,(int)(Calendar.getInstance().get(Calendar.YEAR)+(form.getNumberOfYears()- Integer.parseInt(form.getNumberName()))-1)));
-       }
+        int semester = dateFunction.semester(Calendar.getInstance());
+        if(semester==1)
+        {
+            String year = dateFunction.getYear(Calendar.getInstance());
+            int actualYear = Integer.valueOf(year);
+            int numberOfYears = form.getNumberOfYears().intValue();
+            int actualClass = Integer.valueOf(form.getNumberName());
+           int yearOfEnd =  (actualYear+numberOfYears)-(actualClass-1);
+           clazz.setYearOfFoundation(dateFunction.setDate(1, 9, yearOfEnd));
+            
+        }
+        else{
+            String year = dateFunction.getYear(Calendar.getInstance());
+            int actualYear = Integer.valueOf(year);
+            int numberOfYears = form.getNumberOfYears().intValue();
+            int actualClass = Integer.valueOf(form.getNumberName());
+           int yearOfEnd =  (actualYear+numberOfYears)-(actualClass);
+           clazz.setYearOfFoundation(dateFunction.setDate(1, 9, yearOfEnd));
+        }
+        //       if(Calendar.getInstance().get(Calendar.YEAR)>7){
+        //         clazz.setYearOfFoundation(dateFunction.setDate(1, 9,(int)(Calendar.getInstance().get(Calendar.YEAR)+(form.getNumberOfYears()- Integer.parseInt(form.getNumberName())))));
+        //       }
+        //       else{
+        //           clazz.setYearOfFoundation(dateFunction.setDate(1, 9,(int)(Calendar.getInstance().get(Calendar.YEAR)+(form.getNumberOfYears()- Integer.parseInt(form.getNumberName()))-1)));
+        //       }
         
 
 

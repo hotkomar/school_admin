@@ -291,7 +291,7 @@ public class StudentCon implements AdminControllerImp{
      if(student!=null)
      {
          student.setId_class(null);
-         studentMan.edit(student, true);
+         studentMan.edit(student, false);
          studentMan.visible(id, true);
      }
      else{

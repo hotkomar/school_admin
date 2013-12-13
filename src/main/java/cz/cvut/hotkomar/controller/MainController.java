@@ -318,7 +318,7 @@ teacher.setIdType(role3);
         clazz.setNumberOfYears((byte) 4);
         clazz.setVisible(Boolean.TRUE);
         c.set(2017, 5, 31);
-        clazz.setYearOfFoundation(c);
+        clazz.setYearOfFoundation(dateFunction.setDate(31,8, 2015));
        studentClassMan.add(clazz, false);
         teacher.setId_class(clazz);
        teacherMan.edit(teacher, false);
@@ -477,6 +477,7 @@ teacher.setIdType(role3);
         test.setThree((short) 60);
         test.setTwo((short) 70);
         test.setPassword("qwe");
+        test.setTaught(Boolean.FALSE);
 //
         
 
@@ -554,24 +555,27 @@ teacher.setIdType(role3);
             t.setName("test"+i);
             t.setId_teacher(teacher);
             t.setVisible(Boolean.TRUE);
+            t.setTaught(Boolean.FALSE);
             testMan.add(t, true);
         }
 //       
         
         TestResult result = new TestResult();
-        result.setTestDate(dateFunction.setDate(1, 1, 2012));
+        result.setTestDate(dateFunction.setDate(1, 1, 2013));
         Student findById = studentMan.findById(Long.valueOf("1"));
         result.setStudent(findById);
         result.setTest(test);
         result.setPercent(100.0);
         result.setMark((short) 2);
         result.setVisible(Boolean.TRUE);
-        result.setActualMark(Boolean.TRUE);     
+        result.setActualMark(Boolean.TRUE);
+        result.setWebTest(Boolean.TRUE);
+        result.setClassified(Short.valueOf("0"));
         testResultMan.add(result, true);
         
         
         TestResult result2 = new TestResult();
-        result2.setTestDate(dateFunction.setDate(1,11, 2012));
+        result2.setTestDate(dateFunction.setDate(1,11, 2013));
         
         result2.setStudent(findById);
         result2.setTest(test);
@@ -579,61 +583,90 @@ teacher.setIdType(role3);
         result2.setMark(null);
         result2.setVisible(Boolean.TRUE);
         result2.setActualMark(Boolean.FALSE);
-        
-
+        result2.setWebTest(Boolean.TRUE);
+ result2.setClassified(Short.valueOf("0"));
         
         testResultMan.add(result2, true);
         
        
         TestResult result3 = new TestResult();
-        result3.setTestDate(dateFunction.setDate(31, 1, 2012));
+        result3.setTestDate(dateFunction.setDate(31, 1, 2013));
         
         result3.setStudent(student1);
         result3.setTest(test);
         result3.setPercent(100.0);
         result3.setMark(null);
         result3.setVisible(Boolean.TRUE);
-        result3.setActualMark(Boolean.TRUE);      
+        result3.setActualMark(Boolean.TRUE);  
+         result3.setWebTest(Boolean.TRUE);
+          result3.setClassified(Short.valueOf("0"));
         testResultMan.add(result3, true);
         
         
         TestResult result4 = new TestResult();
         c.set(2012, 3, 10);
-        result4.setTestDate(dateFunction.setDate(1, 9, 2012));
+        result4.setTestDate(dateFunction.setDate(1, 9, 2013));
         
         result4.setStudent(findById);
         result4.setTest(test);
         result4.setPercent(100.0);
         result4.setMark((short) 5);
         result4.setVisible(Boolean.TRUE);
-        result4.setActualMark(Boolean.TRUE);      
+        result4.setActualMark(Boolean.TRUE); 
+         result4.setWebTest(Boolean.TRUE);
+          result4.setClassified(Short.valueOf("0"));
         testResultMan.add(result4, true);
         
         
         TestResult result5 = new TestResult();
         c.set(2012, 0, 5);
-        result5.setTestDate(dateFunction.setDate(1,2, 2012));
+        result5.setTestDate(dateFunction.setDate(1,2, 2013));
         
         result5.setStudent(findById);
         result5.setTest(test);
         result5.setPercent(100.0);
         result5.setMark((short) 3);
         result5.setVisible(Boolean.TRUE);
-        result5.setActualMark(Boolean.TRUE);      
+        result5.setActualMark(Boolean.TRUE); 
+         result5.setWebTest(Boolean.TRUE);
+          result5.setClassified(Short.valueOf("0"));
         testResultMan.add(result5, true);
         
         
         TestResult result6 = new TestResult();
         c.set(2012, 6, 5);
-        result6.setTestDate(c);
+        result6.setTestDate(dateFunction.setDate(1,9, 2013));
         
         result6.setStudent(findById);
         result6.setTest(test);
         result6.setPercent(100.0);
         result6.setMark((short) 2);
         result6.setVisible(Boolean.TRUE);
-        result6.setActualMark(Boolean.TRUE);      
+        result6.setActualMark(Boolean.TRUE);
+        result6.setWebTest(Boolean.TRUE);
+         result6.setClassified(Short.valueOf("0"));
         testResultMan.add(result6, true);
+        
+        Test testWeb = new Test ();
+        testWeb.setName("zadaná známka");
+        testWeb.setId_subject(test.getId_subject());
+        testWeb.setId_teacher(test.getId_teacher());
+        testWeb.setVisible(Boolean.TRUE);
+        testWeb.setTaught(Boolean.TRUE);
+     testMan.add(testWeb, false);
+        TestResult result7 = new TestResult();
+        c.set(2013, 6, 5);
+        result7.setTestDate(dateFunction.setDate(1,12, 2013));
+        
+        result7.setStudent(findById);
+        result7.setTest(testWeb);
+        result7.setPercent(100.0);
+        result7.setMark((short) 2);
+        result7.setVisible(Boolean.TRUE);
+        result7.setActualMark(Boolean.TRUE);
+        result7.setWebTest(Boolean.FALSE);
+         result7.setClassified(Short.valueOf("0"));
+        testResultMan.add(result7, true);
 
     }
     

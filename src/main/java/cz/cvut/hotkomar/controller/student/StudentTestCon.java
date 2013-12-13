@@ -136,6 +136,7 @@ public class StudentTestCon {
                 testResult.setVisible(Boolean.TRUE);
                 testResult.setTestDate(Calendar.getInstance());
                 testResult.setActualMark(Boolean.TRUE);
+                testResult.setWebTest(Boolean.TRUE);
                 testResultMan.add(testResult, false);
             }
         }

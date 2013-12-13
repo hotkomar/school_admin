@@ -11,7 +11,7 @@ import cz.cvut.hotkomar.form.RemovePasswordForm;
 import cz.cvut.hotkomar.form.admin.FullTextForm;
 import cz.cvut.hotkomar.form.admin.NewTeacherForm;
 import cz.cvut.hotkomar.form.teacher.AnswerForm;
-import cz.cvut.hotkomar.form.teacher.ChangeMarkForm;
+import cz.cvut.hotkomar.form.teacher.ChangeMarkWebForm;
 import cz.cvut.hotkomar.form.teacher.NewTestForm;
 import cz.cvut.hotkomar.form.teacher.QuestionForm;
 import cz.cvut.hotkomar.form.teacher.ResultTestForm;
@@ -305,14 +305,24 @@ private FormMessage message;
             }
         }
         
-        
-        
+        List<Test> test1 = new ArrayList<Test>();
+        for(Test t :list)
+        {
+            if(!t.getTaught())
+            {
+                System.out.println("****************");
+                System.out.println("****************");
+                System.out.println("t "+t.getName()+" "+t.getId());
+                System.out.println("****************");
+                test1.add(t);
+            }
+        }
         
         
         FullTextForm fullTextForm = new FullTextForm();
         fullTextForm.setFullText(attribute);
-       pagination.setList(list);
-       m.addAttribute("listTest",pagination.paginationList(list, page));
+       pagination.setList(test1);
+       m.addAttribute("listTest",pagination.paginationList(test1, page));
         m.addAttribute("pageForm",pagination.getPageForm());
      //  m.addAttribute("listTest", findAll);
         m.addAttribute("form",fullTextForm);
@@ -333,7 +343,7 @@ private FormMessage message;
     {
        Teacher teacher = teacherMan.findById(Long.parseLong("1"));
        Test findById = testMan.findByIDTeacher(id, teacher);
-       if(findById==null)
+       if(findById==null || findById.getTaught())
        {
            return "/admin/errorHups";
        }
@@ -352,7 +362,7 @@ private FormMessage message;
        Test findById = testMan.findByIDTeacher(id, teacher);
        // List<TestResult> findByTest = testResultMan.findByTest(findById);
        List<SubjectOfClass> findBySubjectTeacher = subjectOfClassMan.findBySubjectTeacher(findById.getId_subject(),findById.getId_teacher());
-       if(findById==null)
+       if(findById==null || findById.getTaught() )
        {
            return "/admin/errorHups";
        }
@@ -375,7 +385,7 @@ private FormMessage message;
         Teacher teacher = teacherMan.findById(Long.parseLong("1"));
        Test findById = testMan.findByIDTeacher(idTest, teacher);
         StudentClass clazz = studentClassMan.findById(id);
-        if(findById==null || clazz==null)
+        if(findById==null || clazz==null || findById.getTaught())
         {
             return"admin/errorHups";
         }
@@ -400,7 +410,7 @@ private FormMessage message;
        Test findById = testMan.findByIDTeacher(idTest, teacher);
 //        StudentClass clazz = studentClassMan.findById(id);
        TestResult findById1 = testResultMan.findById(id);
-        if(findById==null || findById1==null)
+        if(findById==null || findById1==null || findById.getTaught())
         {
             return"admin/errorHups";
         }
@@ -416,7 +426,7 @@ private FormMessage message;
        //        StudentClass clazz = studentClassMan.findById(id);
        Student student = studentMan.findById(id);
        TestResult findById1 = testResultMan.findByStudentActualMark(student);
-        if(findById==null || findById1==null)
+        if(findById==null || findById1==null || findById.getTaught())
         {
             return"admin/errorHups";
         }
@@ -431,7 +441,7 @@ private FormMessage message;
         Teacher teacher = teacherMan.findById(Long.parseLong("1"));
        Test findById = testMan.findByIDTeacher(idTest, teacher);
         Student student = studentMan.findById(id);
-        if(findById==null || student==null)
+        if(findById==null || student==null || findById.getTaught())
         {
             return"admin/errorHups";
         }
@@ -460,14 +470,16 @@ private FormMessage message;
         return"teacher/test/studentResults";
     }
     @RequestMapping(value = "/teacher/infoTest/studentResult.htm", method = RequestMethod.POST)
-    public String studentResultPost(@ModelAttribute(value = "form") ChangeMarkForm form)
+    public String studentResultPost(@ModelAttribute(value = "form") ChangeMarkWebForm form)
     {
+        Teacher teacher = teacherMan.findById(Long.valueOf("1"));
        TestResult findById = testResultMan.findById(form.getId());
        if(findById==null)
        {
           return"admin/errorHups";
        }
         findById.setMark(form.getMark());
+        findById.setTeacher(teacher);
         testResultMan.edit(findById, true);
         return"redirect:studentResult.htm?student="+findById.getStudent().getId()+"&test="+findById.getTest().getId()+"&idClass="+findById.getStudent().getId_class().getId();
     }
@@ -476,7 +488,7 @@ private FormMessage message;
     {
        Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(id,findById);
-       if(findByIDTeacher==null)
+       if(findByIDTeacher==null || findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
@@ -495,7 +507,7 @@ private FormMessage message;
     {
        Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(id, findById);
-       if(findByIDTeacher==null)
+       if(findByIDTeacher==null || findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
@@ -526,7 +538,7 @@ private FormMessage message;
        Test findByIDTeacher = testMan.findByIDTeacher(testId, teacher);
        StudentClass findById = studentClassMan.findById(id);
        
-       if(findById==null || findByIDTeacher==null)
+       if(findById==null || findByIDTeacher==null || findByIDTeacher.getTaught() )
        {
            return"admin/errorHups";
        }
@@ -539,7 +551,7 @@ private FormMessage message;
     {
        Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(id,findById);
-       if(findByIDTeacher==null)
+       if(findByIDTeacher==null ||findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
@@ -562,7 +574,7 @@ private FormMessage message;
     public String changeTestPost(@Valid@ModelAttribute("form") ChangePassForm form, BindingResult error, ModelMap m)
     {Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(form.getId(), findById);
-    if(findByIDTeacher==null)
+    if(findByIDTeacher==null ||findByIDTeacher.getTaught())
         {
             return"admin/errorHups";
         }
@@ -594,16 +606,22 @@ private FormMessage message;
     {
        Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(id,findById);
-       if(findByIDTeacher==null || findByIDTeacher.getPassword()==null)
+       if(findByIDTeacher==null || findByIDTeacher.getPassword()==null ||findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
        CheckPassForm form = new CheckPassForm();
        form.setId(id);
+       boolean pass=false;
+       if(findByIDTeacher.getPassword()!=null)
+       {
+           pass=true;
+       }
        m.addAttribute("view", true);
        m.addAttribute("form",form);
        m.addAttribute("test",true);
        m.addAttribute("idTest", id);
+       m.addAttribute("hasPass", pass);
        
         return"teacher/test/viewPass";
     }
@@ -612,7 +630,7 @@ private FormMessage message;
     {
        Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(form.getId(), findById);
-       if(findByIDTeacher==null)
+       if(findByIDTeacher==null || findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
@@ -642,7 +660,7 @@ private FormMessage message;
     {
        Teacher findById = teacherMan.findById(Long.valueOf("1"));
        Test findByIDTeacher = testMan.findByIDTeacher(form.getId(), findById);
-       if(findByIDTeacher==null )
+       if(findByIDTeacher==null ||findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
@@ -679,6 +697,7 @@ private FormMessage message;
      //   test.setPassword(form.getPassword());
         test.setTaught(Boolean.TRUE);
         test.setVisible(Boolean.TRUE);
+        test.setTaught(Boolean.FALSE);
         System.out.println("předmět "+form.getId_subject());
        Teacher teacher= teacherMan.findById(idTeacher);
        Subject subject = subjectMan.findById(form.getId_subject());
@@ -778,10 +797,10 @@ private FormMessage message;
         
         return form;
     }
-    private ChangeMarkForm actualMarkToForm(TestResult testResult)
+    private ChangeMarkWebForm actualMarkToForm(TestResult testResult)
     {
         if(testResult!=null){
-        ChangeMarkForm form = new ChangeMarkForm();
+        ChangeMarkWebForm form = new ChangeMarkWebForm();
         form.setId(testResult.getId());
         form.setMark(testResult.getMark());
         form.setMap();

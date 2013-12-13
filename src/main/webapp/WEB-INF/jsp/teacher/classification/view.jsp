@@ -61,7 +61,7 @@
                         <c:when test="${subjectClass.size()>0}">
                             <div class="col-lg-2"> 
                     <table class="table table-bordered table-hover">
-                        <thead><tr>
+                        <thead><tr style="background-color: steelblue; color: white">
                                 <th>Číslo</th><th>Třída</th><th>Info</th>
                             </tr></thead>
                         <tfoot></tfoot>
