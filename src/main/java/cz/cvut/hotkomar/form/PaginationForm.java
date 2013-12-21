@@ -4,11 +4,13 @@
  */
 package cz.cvut.hotkomar.form;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Marie Hoťková
  */
-public class PaginationForm {
+public class PaginationForm implements Serializable{
     
     private Integer actualPage;
     private Integer countOfPage;

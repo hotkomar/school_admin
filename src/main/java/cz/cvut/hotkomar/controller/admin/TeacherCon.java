@@ -6,6 +6,7 @@ package cz.cvut.hotkomar.controller.admin;
 
 import com.sun.net.httpserver.HttpsServer;
 import cz.cvut.hotkomar.controller.AdminControllerImp;
+import cz.cvut.hotkomar.form.ChangePassForm;
 import cz.cvut.hotkomar.form.Form;
 import cz.cvut.hotkomar.form.PaginationForm;
 import cz.cvut.hotkomar.form.admin.NewTeacherForm;
@@ -30,11 +31,16 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
@@ -43,6 +49,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * @author Marie Hotkova
  */
 @Controller
+@Secured(value = {"ROLE_ADMIN"})
 public class TeacherCon implements AdminControllerImp{
     private TeacherMan teacherMan;
     private Pagination pagination;
@@ -101,7 +108,8 @@ public class TeacherCon implements AdminControllerImp{
     public void setPagination(Pagination pagination) {
         this.pagination = pagination;
     }
-    
+  @Autowired
+    private ShaPasswordEncoder passwordEncoder;   
     
 //    @RequestMapping (value="/admin/teachers.htm")
 //    public String teachersGet (ModelMap m)
@@ -167,22 +175,7 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
         Teacher teacher = formToTeacher(form, new Teacher());
        
         Set<UserType> user = new HashSet<UserType>();
-//        
-        //user is admin
-//        if(form.getAdmin()==true)
-//        {
-//            UserType userType = userTypeMan.findByType("ROLE_ADMIN");
-//            if(userType!=null)
-//            {
-//                user.add(userType);
-//                
-//            }else
-//            {
-//              return "/admin/error";  
-//            }
-//                
-//        }
-       // user is teacher
+
         UserType userType = userTypeMan.findByType("ROLE_TEACHER");      
                 if (userType != null) {
             user.add(userType);
@@ -207,6 +200,7 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
         {
             //chyba
             System.out.println("učitel nebyl nalezen");
+            return"admin/errorHups";
         }
        
         
@@ -225,8 +219,8 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
         Teacher teacher = teacherMan.findById(id);
         if(teacher==null)
         {
-            //chyba
-            System.out.println("nenašel jsem id učitele");
+            return"admin/errorHups";
+            
         }
         EditTeacherForm form = editTeacherToForm(teacher);
         form.setAdmin(isAdmin(teacher));
@@ -269,7 +263,7 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
         Teacher findById = teacherMan.findById(id);
         if(findById==null)
         {
-            //chyba
+           return"admin/errorHups";
         }
         ChangePassStudentForm changePassStudentForm = new ChangePassStudentForm();
         changePassStudentForm.setId(findById.getId());
@@ -278,9 +272,42 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
         return"/admin/teacher/changePasswordT";
     }
 
-
-    public String changePassPOST(Form form, BindingResult errors, ModelMap m) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+@RequestMapping(value = "/admin/changePasswordTeacher.htm", method = RequestMethod.POST)
+    public String changePassPOST(@ModelAttribute(value ="form") ChangePassStudentForm form, BindingResult errors, ModelMap m, Authentication auth) {
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);
+        if(findById == null)
+        {
+            return "admin/errorHups";
+        }
+        String hash4 = passwordEncoder.encodePassword(form.getAdminPass(),findById.getLogin());
+        boolean equals = findById.getPassword().equals(hash4);
+        if(errors.hasErrors() || !equals)
+        {      
+            if(!equals)
+            {
+                message.setNegativeMes("Nezadal jste právě heslo!");
+            }
+            
+            
+        m.addAttribute("teacher",true);
+     m.addAttribute("form",form);
+     return"/admin/teacher/changePassword"; 
+        }
+        Teacher findById1 = teacherMan.findById(form.getId());
+            if(findById1==null)
+            {
+                return"admin/errorHups";
+            }
+         String   hash = passwordEncoder.encodePassword(form.getPassword(),findById1.getLogin());
+            findById1.setPassword(hash);
+            System.out.println("hash"+hash);
+            teacherMan.edit(findById1, true);
+        return"redirect:infoTeacher.htm?id="+form.getId();
     }
 
     @Override
@@ -338,6 +365,8 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
         teacher.setMail(form.getMail());
         teacher.setMobilePhone(form.getMobilePhone());
         teacher.setName(form.getName());
+        String hash4 = passwordEncoder.encodePassword(form.getPassword(),teacher.getLogin());
+        teacher.setPassword(hash4);
        // teacher.setPassword(form.getPassword());
         teacher.setPhoneNumber(form.getPhoneNumber());
         teacher.setPlaceOfBorn(form.getPlaceOfBorn());
@@ -500,10 +529,10 @@ public String viewPOST(@ModelAttribute("form") FullTextForm form, BindingResult 
             System.out.println("role "+i.getName());
             if(i.getName().equals("ROLE_ADMIN"))
             {
-                return new Boolean(true);
+                return Boolean.TRUE;
             }
         }
-        return new Boolean(false);
+        return  Boolean.FALSE;
     }
 }
 

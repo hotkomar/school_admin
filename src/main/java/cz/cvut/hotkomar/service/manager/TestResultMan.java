@@ -41,7 +41,7 @@ public class TestResultMan extends GeneralManager<TestResult>{
 //      Transaction tx=null;
      
       try {
-        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE  u.student= :id_student AND u.test= :id_test AND u.visible = true AND u.actualMakr= true");
+        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE u.student= :id_student AND u.test= :id_test AND u.visible= true AND u.actualMark= true");
             
             query.setParameter("id_student", student);
             query.setParameter("id_test", test);
@@ -138,6 +138,32 @@ public class TestResultMan extends GeneralManager<TestResult>{
        
 
     }  
+     public List<TestResult> findByStudentTest(  Student student,Test test) {
+        
+        System.out.println("jsem ve třídě findByClass_id");
+      Session session= getSession();
+//      Transaction tx=null;
+     List<TestResult> list = new ArrayList<TestResult>();
+      try {
+        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE   u.student = :id_student AND u.test= :id_test AND u.visible = true");
+            
+           
+            query.setParameter("id_student", student);
+            query.setParameter("id_test",test);
+             list = query.list();
+            
+           
+         //  System.out.println("vracím : "+list.size());
+//          tx.commit();
+      } catch (Exception e) {
+//          if(tx != null){ tx.rollback();}
+      }
+      return list;
+        
+        
+       
+
+    }  
    public TestResult findByStudentActualMark(  Student student) {
         
         System.out.println("jsem ve třídě findByClass_id");
@@ -205,7 +231,7 @@ public class TestResultMan extends GeneralManager<TestResult>{
 //      Transaction tx=null;
      
       try {
-        Query query = session.createQuery("SELECT Min(u.testDate) FROM TestResult AS u WHERE u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true");
+        Query query = session.createQuery("SELECT Min(u.testDate) FROM TestResult AS u WHERE u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true AND u.mark IS NOT null");
             
            
             query.setParameter("id_student", student);
@@ -241,7 +267,7 @@ public class TestResultMan extends GeneralManager<TestResult>{
 //      Transaction tx=null;
      
       try {
-        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE (u.testDate BETWEEN :first AND :last) AND u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true");
+        Query query = session.createQuery("SELECT u FROM TestResult AS u WHERE (u.testDate BETWEEN :first AND :last) AND u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true AND u.mark IS NOT null");
             
             /*u.test.id_subject = :id_subject AND  u.student = :id_student AND u.visible = true AND u.actualMark = true AND u.testDate*/
             query.setParameter("id_student", student);

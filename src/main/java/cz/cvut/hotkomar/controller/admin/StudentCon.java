@@ -14,15 +14,20 @@ import cz.cvut.hotkomar.form.admin.FullTextForm;
 import cz.cvut.hotkomar.model.entity.FileEntity;
 import cz.cvut.hotkomar.model.entity.Student;
 import cz.cvut.hotkomar.model.entity.StudentClass;
+import cz.cvut.hotkomar.model.entity.StudentParent;
 import cz.cvut.hotkomar.model.entity.Teacher;
 import cz.cvut.hotkomar.model.entity.UserType;
 import cz.cvut.hotkomar.service.checkAndMake.CheckForm;
+import cz.cvut.hotkomar.service.checkAndMake.CreateParentUser;
 import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
+import cz.cvut.hotkomar.service.checkAndMake.MailPost;
 import cz.cvut.hotkomar.service.file.Download;
 import cz.cvut.hotkomar.service.manager.FileMan;
 import cz.cvut.hotkomar.service.manager.StudentClassMan;
 
 import cz.cvut.hotkomar.service.manager.StudentMan;
+import cz.cvut.hotkomar.service.manager.StudentParentMan;
+import cz.cvut.hotkomar.service.manager.TeacherMan;
 import cz.cvut.hotkomar.service.manager.UserTypeMan;
 import cz.cvut.hotkomar.service.message.FormMessage;
 import cz.cvut.hotkomar.service.pagination.Pagination;
@@ -37,7 +42,14 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.apache.commons.collections.list.SetUniqueList;
+import org.openid4java.message.MessageException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -53,6 +65,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * @author Marie Hotkova
  */
 @Controller
+@Secured(value = {"ROLE_ADMIN"})
 public class StudentCon implements AdminControllerImp{
     private Pagination pagination;
     private StudentMan studentMan;
@@ -61,7 +74,12 @@ public class StudentCon implements AdminControllerImp{
     private UserTypeMan userTypeMan;
     private  FileMan fileMan;
     private DateFunction dateFunction;
-    private CheckForm checkForm;
+    
+   
+    private  CreateParentUser createParentUser;
+    private StudentParentMan studentParentMan;
+    private MailPost mailPost;
+    private TeacherMan teacherMan;
     private FormMessage message;
     
             /**
@@ -81,10 +99,7 @@ public class StudentCon implements AdminControllerImp{
     public void setMessage(FormMessage message) {
         this.message = message;
     }
-@Autowired
-    public void setCheckForm(CheckForm checkForm) {
-        this.checkForm = checkForm;
-    }
+
 
     @Autowired
     public void setDateFunction(DateFunction dateFunction) {
@@ -122,7 +137,26 @@ public class StudentCon implements AdminControllerImp{
         this.download = download;
     }
 
-    
+
+@Autowired
+    public void setCreateParentUser(CreateParentUser createParentUser) {
+        this.createParentUser = createParentUser;
+    }
+@Autowired
+    public void setStudentParentMan(StudentParentMan studentParentMan) {
+        this.studentParentMan = studentParentMan;
+    }
+@Autowired
+    public void setMailPost(MailPost mailPost) {
+        this.mailPost = mailPost;
+    }
+@Autowired
+    public void setTeacherMan(TeacherMan teacherMan) {
+        this.teacherMan = teacherMan;
+    }
+
+   @Autowired
+    private ShaPasswordEncoder passwordEncoder; 
     
 
     
@@ -174,35 +208,8 @@ public class StudentCon implements AdminControllerImp{
 
      @RequestMapping(value="/admin/adminNewStudent.htm")
     public String addPOST(@Valid@ModelAttribute("form") NewStudentForm form, BindingResult errors,ModelMap m) throws IOException {
-        
-//         boolean uniqueLogin=true;
-//         boolean imageFile=true;
-        // boolean dateOfBorm =true;
-        // checkForm.validFile(form.getFile());
-        
-//         if(!form.getLogin().isEmpty()){
-//             uniqueLogin = checkForm.uniqueLogin(form.getLogin());
-//         }
-//         if(!form.getFile().isEmpty()){
-//           imageFile  =form.getFile().getContentType().contains("image");
-//           if(imageFile==false)
-//           {
-//               message.setNegativeMes("Vybraný soubor není obrázek");
-//           }
-//           if(form.getFile().getBytes().length>5242880)
-//           {
-//               imageFile = false;
-//               message.setNegativeMes("Soubor je příliš velký. Maximální povolená velikost je je 640 kB");
-//           }
-//             System.out.println("obrázek "+imageFile);
-//             System.out.println("obrázek má "+form.getFile().getBytes().length);
-//         }
-//         if(!form.getDateOfBorn().isEmpty())
-//         {
-//             dateFunction.validDate(form.getDateOfBorn());
-//         }
-        
-         if( /*!uniqueLogin || !imageFile ||!dateOfBorm  || */ errors.hasErrors()  )
+                
+         if(  errors.hasErrors()  )
          {
              m.addAttribute("form",form);
         m.addAttribute("student",true);
@@ -214,17 +221,38 @@ public class StudentCon implements AdminControllerImp{
         student.setPhoto( download.saveFotoStudent(form.getFile()));
          
        UserType userType = userTypeMan.findByType("ROLE_STUDENT");
-            if(userType!=null){
+        UserType userType2 = userTypeMan.findByType("ROLE_PARENT");
+            if(userType!=null && userType2!=null){
             Set<UserType> idType = student.getIdType();
             idType.add(userType);
             student.setIdType(idType);
+           
             }
             else{
-                System.out.println("nenalezla jsem ROLE_STUDENT");
+                return"admin/errorHups";
+               
             }
         studentMan.add(student, true);
+         System.out.println("student id "+student.getId());
+        StudentParent generateParent = generateParent(student, student.getMotherMail(),userType2);
+        String plainpass=generateParent.getPassword();
+        String hash4 = passwordEncoder.encodePassword(generateParent.getPassword(),generateParent.getLogin());
+        generateParent.setPassword(hash4);
+        studentParentMan.add(generateParent, false);
         
-        
+        try{
+         SimpleMailMessage mail = new SimpleMailMessage();
+         System.out.println("matky mail"+student.getMotherMail());
+         mail.setTo(student.getMotherMail());
+         mail.setFrom("kolejniklub@gmail.com");
+         mail.setSubject("SchoolAdmin: přihlašovací údaje");
+         mail.setText("Vaše přihlašovací jméno je "+plainpass+" a heslo je "+generateParent.getPassword()+".");
+         mailPost.send(mail);
+        }
+        catch(MailException e)
+        {
+            message.setNegativeMes("Nepodařilo se odestal e-mail zákonnému zástupci.");
+        }
         
         return"redirect:students.htm";
     }
@@ -233,11 +261,14 @@ public class StudentCon implements AdminControllerImp{
     @RequestMapping(value = "/admin/infoStudent.htm")
     public String info(@RequestParam(value = "id", required = true) Long id,ModelMap m) {
         Student student = studentMan.findById(id);
+        
         if(student==null){
-            //chybu
+           return"admin/errorHups";
         }
+        StudentParent findByStudent = studentParentMan.findByStudent(student);
         m.addAttribute("students", student);
         m.addAttribute("student",true);
+        m.addAttribute("studentParent", findByStudent);
        
         return"/admin/student/infoStudent";
     }
@@ -247,7 +278,7 @@ public class StudentCon implements AdminControllerImp{
     public String editGET(Long id, ModelMap m) {
         Student student = studentMan.findById(id);
      if(student==null){
-         //chyba
+          return"admin/errorHups";
      }
         EditStudentForm studentToForm = editStudentToForm(new EditStudentForm(), student);
         Map<Long, String> listClass = getAllClasses(student.getId_class());
@@ -293,9 +324,15 @@ public class StudentCon implements AdminControllerImp{
          student.setId_class(null);
          studentMan.edit(student, false);
          studentMan.visible(id, true);
+            StudentParent findByStudent = studentParentMan.findByStudent(student);
+         if(findByStudent!=null)
+         {
+             
+             studentParentMan.visible(findByStudent.getId(), false);
+         }
      }
      else{
-         //Chyba
+          return"admin/errorHups";
      }
     return"redirect:students.htm?page="+page;
     }
@@ -315,14 +352,40 @@ public class StudentCon implements AdminControllerImp{
     }
 
     @RequestMapping(value = "/admin/changePasswordStudent.htm", method = RequestMethod.POST)
-    public String changePassPOST(@Valid @ModelAttribute("form") ChangePassStudentForm form, BindingResult errors, ModelMap m) {
+    public String changePassPOST(@Valid @ModelAttribute("form") ChangePassStudentForm form, BindingResult errors, ModelMap m, Authentication auth) {
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);
+        if(findById == null)
+        {
+            return "admin/errorHups";
+        }
         
-        if(errors.hasErrors())
+        String hash4 = passwordEncoder.encodePassword(form.getAdminPass(),findById.getLogin());
+        boolean equals = findById.getPassword().equals(hash4);
+        if(errors.hasErrors() || !equals)
         {      
+            if(!equals)
+            {
+                message.setNegativeMes("Nezadal jste právě heslo!");
+            }
+            
+            System.out.println("ERROR JE "+errors.hasErrors()+"  equals "+equals);
         m.addAttribute("student",true);
      m.addAttribute("form",form);
      return"/admin/student/changePassword"; 
         }
+        Student findById1 = studentMan.findById(form.getId());
+            if(findById1==null)
+            {
+                return"admin/errorHups";
+            }
+            hash4 = passwordEncoder.encodePassword(form.getPassword(),findById1.getLogin());
+            findById1.setPassword(hash4);
+            studentMan.edit(findById1, true);
         return"redirect:infoStudent.htm?id="+form.getId();
     }
 @RequestMapping(value="/admin/removePhotoS.htm")
@@ -368,7 +431,8 @@ public class StudentCon implements AdminControllerImp{
        student.setMail(form.getMail());
        student.setMobilePhone(form.getMobilePhone());
        student.setName(form.getName());
-       //student.setPassword(null);
+       String hash4 = passwordEncoder.encodePassword(form.getPassword(),student.getLogin());
+        student.setPassword(hash4);
        student.setPhoneNumber(form.getPhoneNumber());
        student.setSurname(form.getSurname());
        student.setVisible(Boolean.TRUE);
@@ -496,5 +560,21 @@ public class StudentCon implements AdminControllerImp{
         return map;
     } 
   
-  
+  private StudentParent generateParent(Student s,String mail,UserType userType)
+  {
+        StudentParent studentParent = new StudentParent();
+        studentParent.setStudent(s);
+        studentParent.setVisible(Boolean.TRUE);
+        studentParent.setMail(mail);
+        String createLogin = createParentUser.createLogin(s.getName(),s.getSurname(), s.getId());
+        System.out.println("create login "+createLogin);
+        String password = createParentUser.getPassword();
+        
+        studentParent.setPassword(password);
+        studentParent.setLogin(createLogin);
+        Set<UserType> idType = studentParent.getIdType();
+            idType.add(userType);           
+        studentParent.setIdType(idType);
+        return studentParent;
+  }
 }

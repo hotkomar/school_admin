@@ -13,10 +13,14 @@
         window.location.href = "tests.htm";
     </script>
 </c:if>
+<c:choose >
+    
+    <c:when test="${listSubject.size()>0}">
 <f:form  class="form-horizontal" action="addTest.htm" method="POST" commandName="form" id="testAddForm">
     
     <h4 class="text-info">Hlavička testu</h4>
     <p class="alert alert-info">Všechny položky jsou povinné</p>
+    
     
     <div class="row">
         <f:errors path="*" cssClass="alert alert-danger" element="div"/>
@@ -121,7 +125,8 @@
                            <div class="row">
                                <div class="col-lg-12">
                           <h4 class="text-info">Zadání testu</h4> 
-                         <div id="qestions" class="alert alert-success">
+                          <p class="text text-info">Správné odpovědi zaškrtněte.</p>
+                          <div id="qestions" class="alert " style="background-color: whitesmoke">
                          <c:forEach items="${form.questions}" var="q" varStatus="qstat">
                              <div id="q${qstat.index}">
                                  <div class="row">      
@@ -138,8 +143,10 @@
                     <f:errors path="questions[${qstat.index}].points" cssClass="alert alert-info" element="div"></f:errors>
                     </div>
                     <div class="col-lg-4">
+                        <div class="btn-group">
                         <button type="button" id="delQ${qstat.index}"  onclick="delQuestion(${qstat.index});" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span><strong>Smazat otázku</strong></button>
                               <button type="button" id="addA${qstat.index}"  onclick="addAnswerToQuestion(${qstat.index});"  class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span><strong>Přidat odpověď</strong></button>
+                              </div>
                     </div>
                     </div>
                                  <div class="row">
@@ -158,9 +165,9 @@
                                  
                              
                     
-                    <div id="answers" style= "padding-left: 50px;" >
+                    <div id="answers" style= "padding-left: 50px;padding-right: 50px;" >
                     <c:forEach items="${q.answers}" var="a" varStatus="astat">
-                        <div id="q${qstat.index}a${astat.index}" class="container alert alert-warning">
+                        <div id="q${qstat.index}a${astat.index}" class="container alert " style="background-color:white;">
                             <div class="row">
                                 <div class="col-lg-8"></div>
                                 <div class="col-lg-4">
@@ -174,6 +181,7 @@
                         <f:label path="questions[${qstat.index}].answers[${astat.index}].answer" class="col-lg-2 control-label">Text odpovědi:</f:label>
                          
                         <span class="input-group-addon">
+                       
                             <f:checkbox path="questions[${qstat.index}].answers[${astat.index}].correct" cssClass="control-form"/>
                         </span>
                                                 
@@ -207,13 +215,19 @@
                           
                              
                              <br/><br/>
+                             <div class="btn-group">
                              <button type="button" onclick="saveTest();" id="postTest"  class="btn btn-primary"><strong>Vytvořit test</strong></button>
-                             <a href="<c:url value=""/>" id="removeTest" class="btn btn-danger"><strong>Zrušit test</strong></a>
+                             <a href="<c:url value="/teacher/tests.htm"/>" id="removeTest" class="btn btn-danger"><strong>Zrušit test</strong></a>
                              <a href="<c:url value="addTestClear.htm"/>" class="btn btn-default"><strong>Smazat formulář</strong></a>
-                             
+                             </div>
                              
                              
                             </div>
                             
                             </div>
 </f:form>
+    </c:when>
+    <c:otherwise>
+        <p class="alert alert-warning">Nemůžete vytvořit test.</p>
+    </c:otherwise>
+</c:choose>

@@ -6,6 +6,7 @@ package cz.cvut.hotkomar.form.admin;
 
 import cz.cvut.hotkomar.service.valid.FieldMatch;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -16,9 +17,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class ChangePassStudentForm {
     @NotEmpty(message = "Heslo nesmí být prázdné")
     private String adminPass;
+    
     @NotEmpty(message = "Heslo nesmí být prázdné")
+    @Pattern(regexp = "^^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(.){5,255}$", message = "Heslo musí mít minimálně 5 znaků a musí obsahovat minimálně jedno číslo, jedno velké a jedno malé písmeno.")
     private String password;
     @NotEmpty(message = "Heslo nesmí být prázdné")
+    @Pattern(regexp = "^^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(.){5,255}$", message = "Heslo musí mít minimálně 5 znaků a musí obsahovat minimálně jedno číslo, jedno velké a jedno malé písmeno.")
     private String password2;
     private Long id;
 

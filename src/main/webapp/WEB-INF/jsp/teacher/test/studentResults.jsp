@@ -52,9 +52,9 @@
     
 <div class="row col-lg-6">
     <br/>
-   <p class="text text-info">* Aktuálně platná známka je modře vyznačena a nejde smazat.</p>
+   <p class="text text-info">* Aktuálně platná známka je zeleně vyznačena a nejde smazat.</p>
     <table class="table table-bordered">
-        <thead><tr><th>Číslo</th><th>Datum</th><th>Známka</th><th>Procenta</th><th>Smazat</th></tr></thead>
+        <thead><tr style="background-color: steelblue;color: white"><th>Číslo</th><th>Datum</th><th>Známka</th><th>Procenta</th><th>Smazat</th></tr></thead>
         <tfoot></tfoot>
         <tbody>
     <c:forEach items="${results}"  var="item" varStatus="iterator">
@@ -63,7 +63,7 @@
             
                 <c:choose>
                     <c:when test="${item.mark!=null}">
-       <tr      style="background-color: steelblue;color: white"                                              >
+                        <tr           class="success"                                         >
             <td >
                
                 
@@ -76,7 +76,7 @@
         </tr>
                     </c:when >
                     <c:otherwise>
-                       <tr      style="background-color: steelblue;color: white"                                              >
+                       <tr     class="success"                                                 >
             <td >
                
                 

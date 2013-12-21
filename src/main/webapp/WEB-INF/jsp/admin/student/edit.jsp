@@ -133,11 +133,12 @@
                     </div>
                         <div class="form-group">
                             
-                        <f:label path="motherMail" class="col-lg-2 control-label">E-mail:</f:label>
+                        <f:label path="motherMail" class="col-lg-2 control-label">E-mail<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
                         <div class="col-lg-5">
                         <f:input path="motherMail" id="motherMail" cssClass="form-control"/>
                         <f:errors path="motherMail" element="div" cssClass="alert alert-info" />
                         </div>
+                        <p class="text-info"><strong> Na tento e-mail budou zaslány přihlašovací údaje.</strong></p>
                     </div>
                         <h5 class="text-info">2. zákonný zástupce</h5>
                        <div class="form-group">
@@ -209,13 +210,13 @@
                     </div>
                         <f:hidden path="id"/>
                        
-                           
+                        <div class="btn-group">    
                         <button class="btn btn-primary" type="submit">
                 Editovat studenta
             </button>
             <a class="btn btn-danger" href="<c:url value="/admin/infoStudent.htm?id=${form.id}"/>"> Zrušit</a>
-            <a class="btn btn-default">Zrušit změny</a>
-                        
+            <a class="btn btn-default">Obnovit</a>
+                        </div>           
                         
                 </f:form>
             

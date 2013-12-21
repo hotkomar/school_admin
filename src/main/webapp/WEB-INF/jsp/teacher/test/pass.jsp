@@ -52,10 +52,7 @@
 </div>
 </c:if>
             </div>
-            <p>
-                
-            </p>
-            
+             <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
            <f:form  class="form-horizontal" commandName="form" action="changeTestPass.htm" method="POST">
                     
                         
@@ -89,13 +86,13 @@
                     </div>
                         
                         <f:hidden path="id"/>
-                           
+                        <div class="btn-group">
                         <button class="btn btn-primary" type="submit">
                Změnit heslo
             </button>
             <a class="btn btn-danger" href="<c:url value="infoTest.htm?test=${form.id}"/>">Zrušit</a>
             <button class="btn btn-default" type="reset">Vymazat formulář</button>
-                        
+                        </div>        
                         
                 </f:form>
                     

@@ -68,7 +68,7 @@
                     
                 </div>
                    <div class="col-lg-2">
-                        <a href="<c:url value="#"/>" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>Přidat známku</a>
+                        <a href="<c:url value="/teacher/classification/studentInfo/addMark.htm?idStudent=${students.id}&idSubject=${subjectClassification.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>Přidat známku</a>
                     </div> 
                 </div>
             
@@ -109,7 +109,7 @@
                             <table class="table table-hover table-bordered table-striped">
                                 <thead>
                                     <tr style="background-color: steelblue;color: white">
-                                        <th>Jméno testu</th><th>datum</th><th>Web test</th><th>známka</th><th>Známku udělil</th><th>Naposledy editoval</th><th>Změnit známku</th>
+                                        <th>Jméno testu </th><th>datum</th><th>Web test</th><th>známka</th><th>Známku udělil</th><th>Naposledy editoval</th><th>Změnit známku</th><th>Smazat známku</th>
                                     </tr>
                                 </thead> 
                                 
@@ -134,9 +134,9 @@
                                                 </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <td>${item.mark}
-                                                <c:set var="salary" scope="session" value="${salary+(item.mark)}"/>
-                                                 <c:set var="s2" scope="session" value="${iter.index}"/>  
+                                            <td>
+                                                
+                                                 ${item.mark}
                                             </td>
                                             <td>
                                              ${item.teacher.degree}   ${item.teacher.name} ${item.teacher.surname}
@@ -147,19 +147,22 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${item.webTest}">
-                                                <a href="<c:url value="/teacher/classification/studentInfo/changeWebMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Změnit známku
+                                                <a href="<c:url value="/teacher/classification/studentInfo/changeWebMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> 
                                                 </a>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <a href="<c:url value="/teacher/classification/studentInfo/changeMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Změnit známku</a>
+                                                        <a href="<c:url value="/teacher/classification/studentInfo/changeMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> </a>
                                                     </c:otherwise>
                                                 </c:choose>
+                                                </td>
+                                                <td>
+                                                    <a href="<c:url value="/teacher/classification/studentInfo/removeMark.htm?idResult=${item.id}"/>" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
                                                 </td>
                                         </tr>
                                     </c:forEach>
                                         <tfoot><tr>
                                              
-                                                <th colspan="3">Průměrná známka: </th><th colspan="4">${salary/(s2+1)}</th>
+                                                <th colspan="3">Průměrná známka: </th><th colspan="5"> ${firstAVG}</th>
                                     </tr></tfoot>
                                 </tbody>
                             </table>
@@ -179,10 +182,10 @@
                                 
                             </p>
                            
-                            <table class="table table-hover table-bordered table-striped">
+                             <table class="table table-hover table-bordered table-striped">
                                 <thead>
                                     <tr style="background-color: steelblue;color: white">
-                                        <th>Jméno testu</th><th>datum</th><th>Web test</th><th>známka</th><th>Známku udělil</th><th>Naposledy editoval</th><th>Změnit známku</th>
+                                        <th>Jméno testu </th><th>datum</th><th>Web test</th><th>známka</th><th>Známku udělil</th><th>Naposledy editoval</th><th>Změnit známku</th><th>Smazat známku</th>
                                     </tr>
                                 </thead> 
                                 
@@ -191,7 +194,8 @@
                                     <c:forEach items="${second}" var="item" varStatus="iter">
                                         <tr>
                                             <td>
-                                                ${item.testName}
+                                               
+                                              ${item.testName}
                                             </td>
                                             
                                             <td> ${item.dateMark} </td>
@@ -206,9 +210,9 @@
                                                 </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <td>${item.mark}
-                                                <c:set var="salary" scope="session" value="${salary+(item.mark)}"/>
-                                                 <c:set var="s2" scope="session" value="${iter.index}"/>  
+                                            <td>
+                                                
+                                                 ${item.mark}
                                             </td>
                                             <td>
                                              ${item.teacher.degree}   ${item.teacher.name} ${item.teacher.surname}
@@ -219,19 +223,22 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${item.webTest}">
-                                                <a href="<c:url value="/teacher/classification/studentInfo/changeMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Změnit známku
+                                                <a href="<c:url value="/teacher/classification/studentInfo/changeWebMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> 
                                                 </a>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <a href="<c:url value="#"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Změnit známku</a>
+                                                        <a href="<c:url value="/teacher/classification/studentInfo/changeMark.htm?idResult=${item.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> </a>
                                                     </c:otherwise>
                                                 </c:choose>
+                                                </td>
+                                                <td>
+                                                    <a href="<c:url value="/teacher/classification/studentInfo/removeMark.htm?idResult=${item.id}"/>" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
                                                 </td>
                                         </tr>
                                     </c:forEach>
                                         <tfoot><tr>
                                              
-                                                <th colspan="3">Průměrná známka: </th><th colspan="4">${salary/(s2+1)}</th>
+                                                <th colspan="3">Průměrná známka: </th><th colspan="5"> ${secondAVG}</th>
                                     </tr></tfoot>
                                 </tbody>
                             </table>

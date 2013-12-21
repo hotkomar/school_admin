@@ -111,9 +111,12 @@
                               
                              </div-->
                          </c:forEach>
-                         <f:hidden path="id"/>
+                         <f:hidden path="idTest"/>
+                         <f:hidden path="idStudent"/>
+                         <div class="btn-group">
                              <button type="submit" class="btn btn-primary">Odevzdat test</button>
                              <button type="reset" class="btn btn-danger">Vymazat odpvědi</button>
+                         </div>
                 </f:form>
             </div>
         

@@ -26,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Maru
  */
 @Controller
+@Secured(value = {"ROLE_STUDENT"})
 public class StudentTestCon {
 
     private StudentMan studentMan;
@@ -90,8 +94,20 @@ public class StudentTestCon {
     
     
     @RequestMapping(value = "/student/test.htm")
-    public String view(ModelMap m) {
-        m.addAttribute("form", new CheckPassForm());
+    public String view(ModelMap m,Authentication auth) {
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Student findById  = studentMan.findByLogin(login);
+        if(findById == null)
+        {
+            return "admin/errorHups";
+        }
+        CheckPassForm form = new CheckPassForm();
+        form.setId(findById.getId());
+        m.addAttribute("form",form );
         m.addAttribute("test", true);
         return "student/test/view";
     }
@@ -103,29 +119,46 @@ public class StudentTestCon {
      */
     @RequestMapping(value = "/student/openTest.htm",method = RequestMethod.POST)
     public String openTest(@ModelAttribute("form") CheckPassForm form, ModelMap m) {
-        /*
-         * ULOŽIT INFO O OTEVŘENÍ A NEPOVOLIT Z NOVA OTEVŘÍT, KDYŽ MÁ ZNÁMKU
-         */
         
-        Student findById = studentMan.findById(Long.valueOf("1"));
-        Test findBypass = testMan.findBypass(form.getPassword());
-        if (findById == null ) {
+        Student findById  = studentMan.findById(form.getId());
+        if(findById == null)
+        {
             return "admin/errorHups";
         }
-       
+        Test findBypass = testMan.findBypass(form.getPassword());
         
-        List<SubjectOfClass> findByIdClass = subjectOfClassMan.findByIdClass(findById.getId());
+        
+       
+        //najdu předmět podle třídy
+        List<SubjectOfClass> findByIdClass = subjectOfClassMan.findByIdClass(findById.getId_class().getId());
+        //najít resutl
+       
         boolean hasTest = false;
+        //našel jsem test
         if (findBypass != null) {
+            System.out.println("student "+findById.getName()+" "+findById.getSurname());
+            System.out.println("test "+findBypass.getName());
+          //  projedu předměty třídy
             for (SubjectOfClass subject : findByIdClass) {
-                if (subject.getId_subject().getId() == findBypass.getId() && subject.getId_teacher().getId() == findBypass.getId_teacher().getId()) {
-                    hasTest = true;
+                System.out.println("subject ve for cyklu id of  class"+subject.getId()+"jmého a id předmětu "+subject.getId_subject().getName()+" "+subject.getId_class().getId());
+                
+                if (subject.getId_subject().getId().equals(findBypass.getId_subject().getId()) && subject.getId_teacher().getId().equals(findBypass.getId_teacher().getId())) {
+                    System.out.println("našel jsem předmět");
+                    hasTest = true; //předmět je vyučovaný ve třídě
                 }
             }
+            System.out.println("has test po for cyklu "+hasTest);
+            if(hasTest){
+            //najdu výsledek testu podle studenta
+            System.out.println("hledám podle findById "+findById.getName()+findById.getId());
+             System.out.println("hledám podle findById "+findBypass.getName()+" "+findBypass.getPassword()+" "+findBypass.getId());
             TestResult findByStudentTest = testResultMan.findByStudentTestActualMark(findById, findBypass);
+            
             System.out.println("findBySrudent je "+findByStudentTest);
             if(findByStudentTest!=null)
             {
+                System.out.println("id studenta je "+findById.getId());
+                System.out.println("našel jsem výsledek testu "+findByStudentTest.getId());
                 hasTest=false;
             }
             else
@@ -137,25 +170,31 @@ public class StudentTestCon {
                 testResult.setTestDate(Calendar.getInstance());
                 testResult.setActualMark(Boolean.TRUE);
                 testResult.setWebTest(Boolean.TRUE);
+                testResult.setClassified(Short.valueOf("0"));
                 testResultMan.add(testResult, false);
+                System.out.println("vytvořil jsem nový výsledek testu "+testResult.getClassified());
+            }
             }
         }
+        System.out.println("hasTest "+hasTest);
         if (hasTest == false) {
             message.setNegativeMes("Test s tímto heslem neexistuje nebo k němu nemáte povolený přístup.");
             return "redirect:/student/test.htm";
         }
-        ViewTestForm testToForm = testToForm(findBypass);
+        ViewTestForm testToForm = testToForm(findBypass,findById.getId());
         m.addAttribute("form", testToForm);
         m.addAttribute("test", true);
         return "student/test/test";
     }
-@RequestMapping(value = "/student/saveTest.htm", method = RequestMethod.POST)
+@RequestMapping(value = "/student/saveTest.htm")
     public String saveTestPost(@ModelAttribute("form") ViewTestForm form, ModelMap m) {
-        Student student = studentMan.findById(Long.valueOf("1"));
-        Test findById = testMan.findById(form.getId());
+        Student student = studentMan.findById(form.getIdStudent());
+        Test findById = testMan.findById(form.getIdTest());
         TestResult findByStudentTest = testResultMan.findByStudentTestActualMark(student, findById);
         if(findByStudentTest==null)
         {
+            System.out.println("ID STUDENTA JE "+findById.getId());
+            System.out.println("nenašla jsem výsledek testu");
             return"admin/errorHups";
         }
         TestResult testResult = testResultCheck.checkTest(form,findByStudentTest);
@@ -164,16 +203,18 @@ public class StudentTestCon {
         testResultMan.edit(testResult, false);
         }
         else{
+            System.out.println("neopravil jsem test");
             return"admin/errorHups";
         }
         m.addAttribute("testResult", testResult);
 return"student/test/testResult" ;
 }
 
-    private ViewTestForm testToForm(Test test) {
+    private ViewTestForm testToForm(Test test,Long studentId) {
         System.out.println("test " + test.getName());
         ViewTestForm form = new ViewTestForm();
-        form.setId(test.getId());
+        form.setIdTest(test.getId());
+        form.setIdStudent(studentId);
         form.setName(test.getName());
         form.setQuestions(questionToForm(test.getQuestions()));
         System.out.println("jsem v testu, který má " + form.getQuestions().size());

@@ -25,6 +25,8 @@
     
 </div>
         <div class="panel-body">
+            <c:choose>
+                <c:when test="${teacherWithoutClass.size()>0}">
             <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
             
             <f:form   class="form-horizontal" commandName="form" action="adminNewClass.htm" method="POST">
@@ -70,7 +72,11 @@
                         
                         
                 </f:form>
-            
+                </c:when>
+                <c:otherwise>
+                    <p class="alert alert-warning">Nemůžete přidat novou třídu.</p>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
     

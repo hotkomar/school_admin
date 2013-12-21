@@ -59,12 +59,13 @@
                     </div>
                         
                         <f:hidden path="id"/> 
+                        <div class="btn-group">
                         <button class="btn btn-primary" type="submit">
                 Editovat předmět
             </button>
             <a class="btn btn-danger" href="<c:url value="/admin/infoSubject.htm?id=${form.id}"/>"> Zrušit</a>
-           <button class="btn btn-default" type="reset">Zrušit změny</button>
-                        
+           <button class="btn btn-default" type="reset">Obnovit</button>
+                        </div>            
                         
                 </f:form>
             

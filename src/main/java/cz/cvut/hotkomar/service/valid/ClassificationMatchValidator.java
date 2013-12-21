@@ -38,7 +38,7 @@ public class ClassificationMatchValidator implements ConstraintValidator<Classif
             final String fiveObj = BeanUtils.getProperty(value, fiveClassification);
             System.out.println("validace");
           //  return firstObj == null && secondObj == null || firstObj != null && firstObj.equals(secondObj);
-            return twoObj==null && threeObj==null && fourObj==null && fiveObj==null || (Short.valueOf(twoObj)> Short.valueOf(threeObj) & Short.valueOf(threeObj)> Short.valueOf(fourObj) & Short.valueOf(fourObj)> Short.valueOf(fiveObj));
+            return( twoObj==null && threeObj==null && fourObj==null && fiveObj==null )|| (Short.parseShort(twoObj)> Short.parseShort(threeObj) && Short.parseShort(threeObj)> Short.parseShort(fourObj) && Short.parseShort(fourObj)> Short.parseShort(fiveObj));
         } catch (final Exception ignore) {
             // ignore
         }

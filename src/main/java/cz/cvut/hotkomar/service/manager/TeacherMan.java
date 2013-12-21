@@ -88,33 +88,36 @@ public class TeacherMan extends GeneralManager<Teacher>{
                 return list;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-//            if (tx != null) {
-//                tx.rollback();
-//            }
+             System.out.println("teacherWithoutClass has exception");
+
+          }
             return null;
-        }
+        
 
     }
     
-    public List<Teacher> findByLogin (String login)
+    public Teacher findByLogin (String login)
   {
       System.out.println("jsem ve třídě findByClass_id");
       Session session= getSession();
 //      Transaction tx=null;
-     List<Teacher> list =null;
+     List<Teacher> list ;
       try {
 //          tx=session.beginTransaction();
-          Query query =session.createQuery("SELECT u FROM Teacher AS u WHERE u.login = :login and u.visible=true");
+          Query query =session.createQuery("SELECT u FROM Teacher AS u WHERE u.login= :login AND u.visible= true");
           //query.setParameter("visible",true);
           query.setParameter("login",login);
           list =query.list();
-           
+         // System.out.println("list of teacher "+list.size());
+           if(!list.isEmpty())
+           {
+            return   list.get(0);
+           }
 //          tx.commit();
       } catch (Exception e) {
 //          if(tx != null){ tx.rollback();}
-          return new ArrayList<Teacher>();
+           System.out.println("findByLogin has exception");
       }
-      return list;
+      return null;
   }
 }

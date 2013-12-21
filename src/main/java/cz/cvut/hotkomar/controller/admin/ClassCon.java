@@ -12,12 +12,14 @@ import cz.cvut.hotkomar.form.admin.NewClassForm;
 import cz.cvut.hotkomar.form.admin.NewStudentForm;
 import cz.cvut.hotkomar.model.entity.Student;
 import cz.cvut.hotkomar.model.entity.StudentClass;
+import cz.cvut.hotkomar.model.entity.StudentParent;
 import cz.cvut.hotkomar.model.entity.Subject;
 import cz.cvut.hotkomar.model.entity.SubjectOfClass;
 import cz.cvut.hotkomar.model.entity.Teacher;
 import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
 import cz.cvut.hotkomar.service.manager.StudentClassMan;
 import cz.cvut.hotkomar.service.manager.StudentMan;
+import cz.cvut.hotkomar.service.manager.StudentParentMan;
 import cz.cvut.hotkomar.service.manager.SubjectMan;
 import cz.cvut.hotkomar.service.manager.SubjectOfClassMan;
 import cz.cvut.hotkomar.service.manager.TeacherMan;
@@ -31,6 +33,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -45,6 +48,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * @author Marie Hotkova
  */
 @Controller
+@Secured(value = {"ROLE_ADMIN"})
 public class ClassCon implements AdminControllerImp {
 //    @RequestMapping (value="/admin/classes.htm")
 //    public String teachersGet (ModelMap m)
@@ -58,8 +62,10 @@ public class ClassCon implements AdminControllerImp {
     private TeacherMan teacherMan;
     private SubjectOfClassMan subjectOfClassMan;
     private SubjectMan subjectMan;
-    private FormMessage message;
     private DateFunction dateFunction;
+    private StudentParentMan studentParentMan;
+    private FormMessage message;
+    
 
     /**
      *
@@ -113,7 +119,13 @@ public class ClassCon implements AdminControllerImp {
     public void setStudentMan(StudentMan studentMan) {
         this.studentMan = studentMan;
     }
+@Autowired
+    public void setStudentParentMan(StudentParentMan sutStudentParentMan) {
+        this.studentParentMan = sutStudentParentMan;
+    }
 
+    
+    
     @Override
     @RequestMapping(value = "/admin/classes.htm")
     public String view(@RequestParam(defaultValue = "1", value = "page", required = false) Integer page, ModelMap m, HttpSession session) {
@@ -288,6 +300,12 @@ public class ClassCon implements AdminControllerImp {
             studentMan.edit(student, true);
             studentMan.visible(id, true);
             System.out.println("smazat studenta");
+            StudentParent findByStudent = studentParentMan.findByStudent(student);
+            if(findByStudent!=null)
+            {
+                studentParentMan.visible(findByStudent.getId(), true);
+            }
+            
         } else {
              return "admin/errorHups";
            
@@ -390,10 +408,12 @@ public String upClass (@RequestParam (defaultValue ="1" ,value = "page", require
 
     private Map<Long, String> getAllSubjects() {
         Map<Long, String> map = new HashMap<Long, String>();
-        List<Subject> findAll = subjectMan.findAll();
+        List<Subject> findAll = subjectMan.findByExpiration();
+        if(!findAll.isEmpty()){
         for (Subject sc : findAll) {
             map.put(sc.getId(), sc.getName());
 
+        }
         }
         System.out.println("MAP TEACHER " + map.size());
         return map;
@@ -431,18 +451,18 @@ public String upClass (@RequestParam (defaultValue ="1" ,value = "page", require
         if(semester==1)
         {
             String year = dateFunction.getYear(Calendar.getInstance());
-            int actualYear = Integer.valueOf(year);
+            int actualYear = Integer.parseInt(year);
             int numberOfYears = form.getNumberOfYears().intValue();
-            int actualClass = Integer.valueOf(form.getNumberName());
+            int actualClass = Integer.parseInt(form.getNumberName());
            int yearOfEnd =  (actualYear+numberOfYears)-(actualClass-1);
            clazz.setYearOfFoundation(dateFunction.setDate(1, 9, yearOfEnd));
             
         }
         else{
             String year = dateFunction.getYear(Calendar.getInstance());
-            int actualYear = Integer.valueOf(year);
+            int actualYear = Integer.parseInt(year);
             int numberOfYears = form.getNumberOfYears().intValue();
-            int actualClass = Integer.valueOf(form.getNumberName());
+            int actualClass = Integer.parseInt(form.getNumberName());
            int yearOfEnd =  (actualYear+numberOfYears)-(actualClass);
            clazz.setYearOfFoundation(dateFunction.setDate(1, 9, yearOfEnd));
         }

@@ -37,6 +37,9 @@ import javax.validation.Valid;
 import org.apache.solr.common.util.Hash;
 import org.hibernate.dialect.function.AnsiTrimFunction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -50,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Maru
  */
 @Controller
+@Secured(value = {"ROLE_TEACHER"})
 public class EditTestCon {
 
     private SubjectOfClassMan subjectOfClassMan;
@@ -108,10 +112,20 @@ public class EditTestCon {
     }
 
     @RequestMapping(value = "/teacher/editTest.htm", method = RequestMethod.GET)
-    public String editTestGET(ModelMap m, HttpSession session, @ModelAttribute("form") EditTestForm form, @RequestParam(value = "id", required = true) Long id) {
+    public String editTestGET(ModelMap m, HttpSession session, @ModelAttribute("form") EditTestForm form, @RequestParam(value = "id", required = true) Long id,Authentication auth) {
 
         Test findById = testMan.findById(id);
         if (findById == null || findById.getTaught()) {
+            return "admin/errorHups";
+        }
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher = teacherMan.findByLogin(login);
+        if(teacher == null || !findById.getId_teacher().getId().equals(teacher.getId()))
+        {
             return "admin/errorHups";
         }
         List<TestResult> findByTest = testResultMan.findByTest(findById);
@@ -392,7 +406,7 @@ public class EditTestCon {
                 }
                 findById.setAnswers(null); //zruším cizí klíč
                 System.out.println("list of answer je dlouhý " + listAnswer.size());
-                questionMan.edit(findById, true);//uložím do db bez odpovědí                
+                questionMan.edit(findById, false);//uložím do db bez odpovědí                
                 for (Answer a : listAnswer) {
                     answerMan.delete(a);
                 }
@@ -411,7 +425,7 @@ public class EditTestCon {
             Question formToQuestion = formToQuestion(form.getQuestions().get(i), new Question());
                 Set<Answer> editAnswer = editAnswer(form.getQuestions().get(i), formToQuestion);
                 formToQuestion.setAnswers(editAnswer);
-            questionMan.add(formToQuestion, true);
+            questionMan.add(formToQuestion, false);
             questions.add(formToQuestion);
             }
             else{
@@ -421,7 +435,7 @@ public class EditTestCon {
                     Question formToQuestion = formToQuestion(form.getQuestions().get(i), findById);
                     Set<Answer> editAnswer = editAnswer(form.getQuestions().get(i), formToQuestion);
                 formToQuestion.setAnswers(editAnswer);
-                    questionMan.edit(formToQuestion, true);
+                    questionMan.edit(formToQuestion, false);
                     questions.add(formToQuestion);
                 }
                 else{

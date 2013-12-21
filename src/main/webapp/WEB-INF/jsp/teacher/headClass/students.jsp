@@ -9,9 +9,13 @@ Document   : personInfo
 <%@taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@include file="view.jspf" %>
 <div class="row">
-                             
+    <c:choose>
+        <c:when  test="${students.size()>0}">
                              <table class="table table-bordered table-striped table-hover">
-                                 <thead><th>Login</th><th>Jméno</th><th>Příjmení</th><th>info</th></thead>
+                                 <thead><tr style="background-color: steelblue; color: white">
+                                 <th>Login</th><th>Jméno</th><th>Příjmení</th><th>info</th>
+                                     </tr>
+                                 </thead>
                      <tfoot></tfoot>
                      <tbody>
                          <c:forEach items="${students}" var="students1">
@@ -26,6 +30,11 @@ Document   : personInfo
                          </c:forEach>
                      </tbody>
                              </table>
+        </c:when>
+        <c:otherwise>
+            <p class="text text-warning">Nejste třídním učitelem nebo Vaše třída nemá studenty</p>
+        </c:otherwise>
+    </c:choose>
                              </div>
     
     

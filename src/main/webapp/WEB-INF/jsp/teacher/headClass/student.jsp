@@ -25,7 +25,7 @@ Document   : personInfo
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Osobní údaje</th>
                         </tr>
                     
@@ -68,7 +68,7 @@ Document   : personInfo
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Kontaktní údaje</th>
                         </tr>
                     
@@ -100,7 +100,7 @@ Document   : personInfo
             <div class="col-lg-6">
                <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">1. zákonný zástupce</th>
                         </tr>
                        
@@ -133,7 +133,7 @@ Document   : personInfo
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            <th colspan="2">2. zákonný zástupce</th>
+                            <th colspan="2" style="background-color: steelblue;color: white">2. zákonný zástupce</th>
                         </tr>
                     
                 </thead>

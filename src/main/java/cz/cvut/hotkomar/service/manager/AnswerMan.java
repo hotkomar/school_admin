@@ -39,7 +39,7 @@ public class AnswerMan extends GeneralManager<Answer>{
            System.out.println("vracím : "+list.size());
 //          tx.commit();
       } catch (Exception e) {
-//          if(tx != null){ tx.rollback();}
+          System.out.println("findByQuestion has exception");
       }
       return list;
   }

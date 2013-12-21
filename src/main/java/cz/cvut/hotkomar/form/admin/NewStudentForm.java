@@ -78,6 +78,7 @@ public class NewStudentForm implements Form{
     private String phoneNumber;
     // number of fax
     private String fax;
+    @NotEmpty(message = "E-mail nesmí být prázdný.")
      @Email(message = "E-mail není ve správném formátu.")
     private String motherMail;
       @Email(message = "E-mail není ve správném formátu.")
@@ -97,6 +98,7 @@ public class NewStudentForm implements Form{
    {
        if(!file.isEmpty()){
             String[] split = file.getContentType().split("/");
+            //System.out.println("Jméno souboru "+split[0]);
         if(file.getSize()<=204800 && split[0].equals("image") )
         {
             return true;

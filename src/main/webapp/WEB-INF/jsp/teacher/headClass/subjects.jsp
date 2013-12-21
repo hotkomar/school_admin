@@ -16,8 +16,10 @@ Document   : personInfo
 </div>
     <div class="row">
         <p></p>     
+        <c:choose>
+            <c:when test="${subjects.size()>0}">
                              <table class="table table-bordered table-striped table-hover">
-                                 <thead><th>Jméno předmětu</th><th>Vyučující</th></thead>
+                                 <thead><tr style="background-color: steelblue;color: white"><th>Jméno předmětu</th><th>Vyučující</th></tr></thead>
                      <tfoot></tfoot>
                      <tbody>
                          <c:forEach items="${subjects}" var="subject">
@@ -30,6 +32,11 @@ Document   : personInfo
                          </c:forEach>
                      </tbody>
                              </table>
+            </c:when>
+            <c:otherwise>
+                <p class="text text-warning">Nejste třídním učitelem nebo Vaše třída nemá předměty.</p>
+            </c:otherwise>
+        </c:choose>
                              </div>
     
     

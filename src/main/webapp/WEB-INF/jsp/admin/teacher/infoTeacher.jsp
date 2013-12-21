@@ -33,11 +33,12 @@
                 <a href="<!--c:url value="infoTeacher.htm?id={teachers.id+1}"/>" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span>následující uživatel</a>
                 <!--/c:if-->
                 </div>
-            <div class="col-lg-5">
+            <div class="col-lg-5"> 
+                <div class="btn-group">
                 <a href="<c:url value="editTeacher.htm?id=${teachers.id}"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat záznam</strong></a>
                 <a href="<c:url value="removeTeacher.htm?id=${teachers.id}&page=${pagination.page}"/>" class=" btn btn-danger "> <span class="glyphicon glyphicon-remove"></span><strong> Smazat záznam</strong></a>
                 <a href="<c:url value="passTeacher.htm?id=${teachers.id}"/>" class=" btn btn-default " style="color: white; background: black"> <span class="glyphicon glyphicon-wrench"></span><strong> Změnit heslo</strong></a>
-                        
+                </div>         
             </div>
             </div>
                 <div class="row">
@@ -63,7 +64,7 @@
                 <!--obrázek-->
                <c:choose>
                     <c:when test="${teachers.photo != null}">
-                        <img src="<s:url value="/downloadFile.htm?id=${teachers.photo.id}" />" alt="profilové foto" width="300px"  class="img-thumbnail">
+                        <img src="<s:url value="/downloadFile.htm?id=${teachers.photo.id}" />" alt="profilové foto" width="300px" height="425px" class="img-thumbnail" style="margin-bottom:  10px">
                         <a href="<c:url value="removePhoto.htm?id=${teachers.id}"/>" class="btn btn-danger">Smazat fotografii</a>
                     </c:when>
                     <c:otherwise>
@@ -76,9 +77,9 @@
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                     
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Osobní údaje</th>
-                      
+                        <tr>
                     
                 </thead>
                 <tfoot>
@@ -89,7 +90,7 @@
                         <th>Login:</th><td>${teachers.login}</td>
                     </tr>
                     <tr>
-                        <th>Jméno:</th><td>${teachers.degree}</td>
+                        <th>Titul:</th><td>${teachers.degree}</td>
                     </tr>
                     <tr>
                         <th>Jméno:</th><td>${teachers.name}</td>
@@ -119,9 +120,9 @@
                          <div class="col-lg-9">
                <table class="table table-bordered table-striped table-hover">
                     <thead>
-                     
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Pozice</th>
-                      
+                        </tr>
                     
                 </thead>
                 <tfoot>
@@ -130,7 +131,7 @@
                 <tbody>
                     <tr>
                         <th>Třídní učitel:</th>
-                        <td>${teachers.id_class.nameNumber}.${teachers.id_class.name}</td>
+                        <td><a href="<c:url value="/admin/infoClass.htm?id=${teachers.id_class.id}"/>" style="color: black"> ${teachers.id_class.nameNumber}.${teachers.id_class.name}</a></td>
                     </tr>
                     <tr>
                         <th>Pedagogický poradce:</th>
@@ -165,7 +166,7 @@
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Kontaktní údaje</th>
                         </tr>
                     
@@ -198,7 +199,7 @@
             <div class="col-lg-9">
                <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Zaměstanecké údaje</th>
                         </tr>
                        
@@ -227,9 +228,9 @@
                     <div class="row">
                         <div class="col-lg-3"></div>
                                        <div class="col-lg-9">
-                    <div class=" panel panel-default">
+                    <div class=" panel panel-primary">
 <div class="panel-heading">
-                    <h4 class="panel-title">Vzdělání</h4>
+    <h4 class="panel-title" style="color: white"><strong>Vzdělání</strong></h4>
 </div>
                         <div class="panel-body">
                     <p>

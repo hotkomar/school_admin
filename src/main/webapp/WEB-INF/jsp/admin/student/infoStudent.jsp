@@ -28,12 +28,13 @@
               <a href="<s:url value="/admin/students.htm?page=${pagination.page}" />" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span> <strong> Zpět na seznam studentů</strong></a>
             </div>
             <div class="col-lg-5">
-                
+                <div class="btn-group">   
                 <a href="<c:url value="editStudent.htm?id=${students.id}"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat záznam</strong></a>
            
                 <a href="<c:url value="/admin/removeStudent.htm?id=${students.id}&page=${pagination.page}"/>" class=" btn btn-danger "> <span class="glyphicon glyphicon-remove"></span><strong> Smazat záznam</strong></a>
            <a href="<c:url value="studentPass.htm?id=${students.id}"/>" class=" btn btn-default " style="color: white; background: black"> <span class="glyphicon glyphicon-wrench"></span><strong> Změnit heslo</strong></a>
-            </div>
+                </div>
+                </div>
             </div>
             <p>
                 
@@ -58,8 +59,8 @@
                 <!--obrázek-->
                <c:choose>
                     <c:when test="${students.photo != null}">
-                        <img src="<s:url value="/downloadFile.htm?id=${students.photo.id}" />" alt="profilové foto" width="300px"  class="img-thumbnail">
-                        <a href="<s:url value="removePhotoS.htm?id=${students.id}"/>" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>Smazat Fotografii</a>
+                        <img src="<s:url value="/downloadFile.htm?id=${students.photo.id}" />" alt="profilové foto" width="300px" height="425px"  class="img-thumbnail" style="margin-bottom:  10px">
+                        <a href="<s:url value="removePhotoS.htm?id=${students.id}"/>" class="btn btn-danger" ><span class="glyphicon glyphicon-remove"></span>Smazat Fotografii</a>
                         <p></p>
                     </c:when>
                     <c:otherwise>
@@ -70,7 +71,7 @@
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Osobní údaje</th>
                         </tr>
                     
@@ -109,7 +110,7 @@
             <div class="col-lg-3">
                <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th>Třída</th>
                         </tr>
                        
@@ -120,7 +121,7 @@
                 </tfoot>
                 <tbody>
                     <tr>
-                        <th>${students.id_class.nameNumber}.${students.id_class.name}</th>
+                        <th ><a href="<c:url value="/admin/infoClass.htm?id=${students.id_class.id}"/>" style="color: black"> ${students.id_class.nameNumber}.${students.id_class.name}</a></th>
                     </tr>
                     
                     
@@ -132,7 +133,7 @@
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">Kontaktní údaje</th>
                         </tr>
                     
@@ -164,7 +165,7 @@
             <div class="col-lg-6">
                <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">1. zákonný zástupce</th>
                         </tr>
                        
@@ -186,7 +187,9 @@
                     <tr>
                         <th>Fax:</th> <td>${students.motherMail}</td>
                     </tr>
-                    
+                    <tr>
+                        <th>Login:</th><td>${studentParent.login}</td>
+                    </tr>
                     
                     
                 </tbody>
@@ -196,7 +199,7 @@
                 <div class="col-lg-6">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color: steelblue;color: white">
                             <th colspan="2">2. zákonný zástupce</th>
                         </tr>
                     

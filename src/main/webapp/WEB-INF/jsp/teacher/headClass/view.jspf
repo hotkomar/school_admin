@@ -52,6 +52,7 @@
             <div class="container">
                 <div class="row col-lg-3"></div>
                 <div class="row col-lg-6">
+                    <c:if test="${headClazz!=null}">
                     <table class="table table-bordered table-striped table-hover">
                         <thead></thead>
                         <tfoot></tfoot>
@@ -61,10 +62,11 @@
                             </tr><tr>
                                 <th>Počet studentů</th><td>${headClazz.students.size()}</td>
                             </tr><tr>
-                                <th>Počet vyučovaných předmětů</th><td>${headClazz.subjects.size()}</td>
+                                <th>Počet vyučovaných předmětů</th><td>${subjectsClass}</td>
                             </tr>
                         </tbody>
                     </table>
+                    </c:if>
                 </div>
                 <div class="row col-lg-3"></div>            
             </div>

@@ -4,17 +4,21 @@
  */
 package cz.cvut.hotkomar.form.teacher;
 
+import cz.cvut.hotkomar.service.valid.BornMatch;
 import java.util.HashMap;
 import java.util.Map;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
  * @author Maru
  */
+@BornMatch(born = "markDate",message = "Datum je špatně zadané nebo neexistuje")
 public class ChangeMarkForm {
 
    private Long id;
    private Short mark;
+   @NotEmpty(message = "Datum testu musí být vyplněno.")
    private String markDate;
    private Short classified;
   Map<Short,Short> map = new HashMap<Short, Short>();

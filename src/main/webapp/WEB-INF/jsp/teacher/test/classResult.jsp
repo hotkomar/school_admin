@@ -10,7 +10,7 @@
 <div class="row col-lg-6">
 
     <table class="table table-bordered table-striped table-hover ">
-        <thead><tr><th>Login</th><th>Jméno</th><th>Příjmení</th><th>Zobrazit výsledek testu</th></tr></thead>
+        <thead><tr style="background-color: steelblue;color: white"><th>Login</th><th>Jméno</th><th>Příjmení</th><th>Zobrazit výsledek testu</th></tr></thead>
         <tfoot></tfoot>
         <tbody>
     <c:forEach items="${results}"  var="item">

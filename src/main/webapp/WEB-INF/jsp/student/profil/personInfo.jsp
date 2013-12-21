@@ -46,11 +46,11 @@
                 
                 </div>
             <div class="col-lg-4">
-            
+                <div class="btn-group">
                 <a href="<c:url value="editKontakt.htm"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat profil</strong></a>
                 
                 <a href="<c:url value="changePass.htm"/>" class=" btn btn-default " style="color: white; background: black"> <span class="glyphicon glyphicon-wrench"></span><strong> Změnit heslo</strong></a>
-                        
+                </div>        
             </div>
             </div>
                 
@@ -74,7 +74,7 @@
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                        <tr>
+                        <tr style="background-color:steelblue;color:white ">
                             <th colspan="2">Osobní údaje</th>
                         </tr>
                     
@@ -139,7 +139,7 @@
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            <th colspan="2">Kontaktní údaje</th>
+                            <th colspan="2" style="background-color:steelblue;color:white ">Kontaktní údaje</th>
                         </tr>
                     
                 </thead>
@@ -172,7 +172,7 @@
                <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            <th colspan="2">1. zákonný zástupce</th>
+                            <th colspan="2" style="background-color:steelblue;color:white ">1. zákonný zástupce</th>
                         </tr>
                        
                     
@@ -204,7 +204,7 @@
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            <th colspan="2">2. zákonný zástupce</th>
+                            <th colspan="2" style="background-color:steelblue;color:white ">2. zákonný zástupce</th>
                         </tr>
                     
                 </thead>

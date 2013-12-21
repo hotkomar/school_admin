@@ -10,16 +10,16 @@
 <%@taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@include file="../header.jspf" %>
 <%@include file="../headerMenu.jspf" %>
-<%@include file="leftMenu.jspf" %>
-<!--%@include file="/dist/js/jquery.js" %-->
 
+<!--%@include file="/dist/js/jquery.js" %-->
+<%@include file="leftMenu.jspf" %>
 
 <div class="container">
 <div class="row">
     <div class=" panel panel-default">
 <div class="panel-heading">
     
-    <h2 class="panel-title"> Informace</h2>
+    <h2 class="panel-title">  Změnit heslo</h2>
   
    
     
@@ -54,11 +54,16 @@
             <p>
                 
             </p>
-            <div class="container">
-                <div class="row">
-             
-                </div>
-            </div>
+            
+            <%@include file="../changePass.jspf" %>  
+                    
+        </div>
+    </div>
+    
+        
+    
+
+</div> 
         
     
 

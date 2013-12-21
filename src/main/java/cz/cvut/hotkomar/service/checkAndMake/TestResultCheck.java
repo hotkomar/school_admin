@@ -50,6 +50,7 @@ public class TestResultCheck {
         System.out.println("test");
         for(ViewQuestionForm q : form.getQuestions())
         {
+            //přičtu body do celkového počtu bodů
             count+=q.getPoints();
            // boolean correctAnswer =true;
             ArrayList<Boolean> correctAnswer = new ArrayList<Boolean>();
@@ -76,7 +77,7 @@ public class TestResultCheck {
             }
         }
         System.out.println("celkový počet bodů je "+sumPoints+" z "+count);
-        testResult = chooseMark(form.getId(), sumPoints, count,testResult);
+        testResult = chooseMark(form.getIdTest(), sumPoints, count,testResult);
         return testResult;
         
     }

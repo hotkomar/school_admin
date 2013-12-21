@@ -13,7 +13,8 @@ import java.util.List;
  */
 public class ViewTestForm {
     private String name;
-    private Long id;
+   private Long idTest;
+   private Long idStudent;
     private List<ViewQuestionForm> questions=new ArrayList<ViewQuestionForm>();
 
     public String getName() {
@@ -24,20 +25,29 @@ public class ViewTestForm {
         this.name = name;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    
     public List<ViewQuestionForm> getQuestions() {
         return questions;
     }
 
     public void setQuestions(List<ViewQuestionForm> questions) {
         this.questions = questions;
+    }
+
+    public Long getIdTest() {
+        return idTest;
+    }
+
+    public void setIdTest(Long idTest) {
+        this.idTest = idTest;
+    }
+
+    public Long getIdStudent() {
+        return idStudent;
+    }
+
+    public void setIdStudent(Long idStudent) {
+        this.idStudent = idStudent;
     }
     
 }

@@ -5,7 +5,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
-<div class="jumbotron" style="background-color: steelblue; color: white">
+<div class="jumbotron" style="background-color: steelblue; color: white;padding-top: 80px">
 <div class="container">
     
     <h1>Administrace</h1>

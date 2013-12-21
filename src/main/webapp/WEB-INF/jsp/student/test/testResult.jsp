@@ -62,7 +62,7 @@
                 
                 <h3 class="text text-info">Klasifikační tabulka</h3>
                 <table class="table table-bordered table-striped table-hover">
-                    <thead><th>Známka</th><th>od %</th><th>do %</th></thead>
+                    <thead><tr style="background-color: steelblue;color: white;"><th>Známka</th><th>od %</th><th>do %</th></tr></thead>
                      <tfoot></tfoot>
                      <tbody>
                          <tr>
@@ -77,7 +77,7 @@
                          <tr>
                              <td>4</td><td>${testResult.test.five+1}</td><td>${testResult.test.four}</td>
                          </tr>
-                         <tr>
+                         <tr >
                              <td>5</td><td>0</td><td>${testResult.test.five}</td>
                          </tr>
                          

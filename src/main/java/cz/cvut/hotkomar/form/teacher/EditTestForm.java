@@ -6,6 +6,7 @@ package cz.cvut.hotkomar.form.teacher;
 
 
 import cz.cvut.hotkomar.service.valid.ClassificationMatch;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ import org.springframework.format.annotation.NumberFormat;
  * @author Maru
  */
 @ClassificationMatch(two="two", three="three", four="four", five="five", message = "Tabulka klasifikace byla špatně vyplněna.")
-public class EditTestForm {
+public class EditTestForm implements Serializable {
     private Long id;
    
     private Long id_teacher;

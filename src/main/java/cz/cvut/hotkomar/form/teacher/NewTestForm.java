@@ -10,6 +10,7 @@ import cz.cvut.hotkomar.model.entity.Teacher;
 import cz.cvut.hotkomar.service.valid.ClassificationMatch;
 
 import cz.cvut.hotkomar.service.valid.FieldMatch;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,7 @@ import org.springframework.format.annotation.NumberFormat;
  */
 @ClassificationMatch(two="two", three="three", four="four", five="five", message = "Tabulka klasifikace byla špatně vyplněna.")
 //@FieldMatch(first = "password", second = "password2", message = "Hesla musí být stejná.")
-public class NewTestForm {
+public class NewTestForm implements Serializable{
     private Long id;
    
     private Long id_teacher;

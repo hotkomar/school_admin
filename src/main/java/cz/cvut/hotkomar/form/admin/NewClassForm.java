@@ -5,6 +5,7 @@
 package cz.cvut.hotkomar.form.admin;
 
 import cz.cvut.hotkomar.model.entity.Teacher;
+import java.util.Calendar;
 import javax.print.DocFlavor;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Max;
@@ -47,6 +48,7 @@ public class NewClassForm {
        
         return false;
     }
+    
     public Long getId() {
         return id;
     }

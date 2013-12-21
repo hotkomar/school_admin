@@ -13,6 +13,7 @@
 </div>
 <div class="row">
     <p class="text text-info"><strong>Celkový počet známek: ${markCount}</strong></p>
+    <c:if test="${markCount}>0">
     <div class="row">
         <div class="col-lg-1"><span class="label" style="color: black;"> Výborně 1</span></div>
         <div class="col-lg-10">
@@ -71,8 +72,10 @@
   </div>
 </div>
         </div>
+    
    <div class="col-lg-1"><span class="label" style="color: black;"> ${ListMarks[4]} %</span></div>
     </div>
+    </c:if>
 </div>
 
      

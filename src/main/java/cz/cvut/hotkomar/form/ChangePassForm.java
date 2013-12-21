@@ -5,8 +5,8 @@
 package cz.cvut.hotkomar.form;
 
 import cz.cvut.hotkomar.service.valid.FieldMatch;
-import cz.cvut.hotkomar.service.valid.TestpassMatch;
-import javax.print.DocFlavor;
+
+import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -14,14 +14,17 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Maru
  */
 @FieldMatch(first = "newPass", second = "newPass2", message = "Hesla musí být stejná.")
-@TestpassMatch(pass = "newPass", message = "Toto heslo už je přiřazené jinému testu")
+//@TestpassMatch(pass = "newPass", message = "Toto heslo už je přiřazené jinému testu")
 public class ChangePassForm {
  
     @NotEmpty(message ="Helso musí být vyplněno")
     private String actualPass;
+    
     @NotEmpty(message ="Helso musí být vyplněno")
+     @Pattern(regexp = "^^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(.){5,255}$", message = "Heslo musí mít minimálně 5 znaků a musí obsahovat minimálně jedno číslo, jedno velké a jedno malé písmeno.")
     private String newPass;
     @NotEmpty(message ="Helso musí být vyplněno")
+     @Pattern(regexp = "^^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(.){5,255}$", message = "Heslo musí mít minimálně 5 znaků a musí obsahovat minimálně jedno číslo, jedno velké a jedno malé písmeno.")
     private String newPass2;
     private Long id;
 

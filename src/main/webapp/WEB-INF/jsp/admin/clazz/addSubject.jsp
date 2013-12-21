@@ -25,7 +25,7 @@
     
 </div>
         <div class="panel-body">
-            <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
+           
             <c:if test="${message.positiveFull}">
     <div class="alert alert-success ">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -39,6 +39,9 @@
   ${message.negativeMes}
 </div>
 </c:if>
+    <c:choose>
+    <c:when test="${subjects.size()>0}">
+         <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
             <f:form   class="form-horizontal" commandName="form" action="adminAddSubjectToClass.htm" method="POST">
                     
                         
@@ -60,15 +63,22 @@
                     </div>
                     
                         <f:hidden path="idClass" />
-                        
+                        <div class="btn-group">
                         <button class="btn btn-primary" type="submit">
                 Přidat předmět třídě
             </button>
             <a class="btn btn-danger" href="<c:url value="/admin/infoClassS.htm?id=${form.idClass}"/>"> Zrušit</a>
            <button class="btn btn-default" type="reset">Vymazat formulář</button>
-                        
+                        </div>            
                         
                 </f:form>
+    </c:when>
+         <c:otherwise>
+             <p class="alert alert-warning">Nemůžete přidat žádný předmět.</p>
+         </c:otherwise>
+    
+    </c:choose>
+         
             
         </div>
     </div>

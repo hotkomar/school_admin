@@ -1,0 +1,8 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+<div class="jumbotron" style="background-color: steelblue; color: white;padding-top: 80px">
+<div class="container">
+    
+    <h1 >Zákonný zástupce</h1>
+</div>
+</div>

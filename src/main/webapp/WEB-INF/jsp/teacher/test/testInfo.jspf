@@ -21,7 +21,7 @@
         <div class="panel-body">
             <div class="row">
             <div class="col-lg-6">
-                <a href="<s:url value="tests.htm?page=${pagination.page}" />" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span> <strong> Zpět na seznam testů</strong></a>
+                <a href="<s:url value="/teacher/tests.htm?page=${pagination.page}" />" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span> <strong> Zpět na seznam testů</strong></a>
                 
                 </div>
             <div class="col-lg-5">
@@ -91,7 +91,7 @@
                 <!--c:set var="salary" scope="session" value="${(point/100)}"/-->
                 
                 <table class="table table-bordered table-striped table-hover">
-                    <thead><th>Známka</th><th>od %</th><th>do %</th><th>Počet bodů</th></thead>
+                    <thead><tr style="background-color: steelblue;color: white"><th>Známka</th><th>od %</th><th>do %</th><th>Počet bodů</th></tr></thead>
                      <tfoot></tfoot>
                      <tbody>
                          <tr>

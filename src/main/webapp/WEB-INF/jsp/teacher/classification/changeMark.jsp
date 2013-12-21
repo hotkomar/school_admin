@@ -28,11 +28,9 @@
         <div class="panel-body">
             
              <div class="row">
+                 
             <div class="col-lg-8">
-                <a href="<c:url value="/teacher/classification/studentInfo.htm?idSubject=${testResult.test.id_subject.id}&idStudent=${testResult.student.id}&next=0&previous=0"/>"
-                   class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span> Zpět na seznam známek
                 
-                </a>
                 </div>
             <div class="col-lg-4">
                 
@@ -59,66 +57,65 @@
             </p>
             <div class="container">
                 <div class="row">
-                    <table class="table table-bordered table-hover table-striped">
-                        <thead></thead>
-                        <tfoot></tfoot>
-                        <tbody>
-                            <tr>
-                                <th>Jméno testu:</th> <td>${testResult.test.name}</td>
-                            </tr>
-                            <tr>
-                                <th>Známka:</th> <td>${testResult.mark}</td>
-                            </tr>
-                            <tr>
-                                <th>Web test:</th> <td>
-                                    <c:choose>
-                                        <c:when test="${testResult.webTest}">
-                                            <span class="glyphicon glyphicon-ok-sign"></span>
-                                        </c:when>
-                                        <c:otherwise>
-                                             <span class="glyphicon glyphicon-remove-circle"></span>
-                                        </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                            </tr>
-                            
-                        </tbody>
-                    </table>
-                    <div class="col-lg-4">
+                 <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
+                    
                     <f:form class="form-horizontal" commandName="form" action="changeMark.htm" method="POST">
+                       
                         <div class="form-group">
-                            <f:label path="markDate" >Datum klasifikace: </f:label>
-                            <f:input path="markDate" class="form-control"/>
+                            
+                        <f:label path="markDate" class="col-lg-2 control-label">Datum klasifikace<span class="glyphicon glyphicon-asterisk"></span>:</f:label>
+                        <div class="col-lg-2">
+                        <f:input path="markDate" id="markDate" cssClass="form-control"/>
+                        <f:errors path="*" element="div" cssClass="alert alert-info" />
                         </div>
-                        <div class="form-group">
+                       
+                         
+                        <p class="text-info"><strong> Datum zadejte ve formátu dd.mm.rrrr</strong></p>
+                        
+                    </div>
+                        <div class="radio">
                             
                                 
-                                    <f:label path="classified"> Absence </f:label>
-                                    <f:radiobutton path="classified" value="2" class="form-contol"/>
+                                    <f:label path="classified" > Absence 
+                                    
+                                    <f:radiobutton path="classified" value="2" />
+                                    </f:label>
+                                    
+                        </div>       
                             
-                        </div>
-                        <div class="form-group">
+                                    <div class="radio">
+                        
                             
                                 
-                                    <f:label path="classified"> Neklasifikováno </f:label>
-                                    <f:radiobutton path="classified" value="1" class="form-contol"/>
+                                    <f:label path="classified" > Neklasifikováno 
+                                   
+                                    <f:radiobutton path="classified" value="1" />
+                           </f:label>
+                                    </div>    
                             
-                        </div>
-                                    <div class="form-group ">
-    <div class="input-group ">
-        <span class="input-group-addon ">
-            <f:label path="classified" >Klasifikováno </f:label>
-            <f:radiobutton path="classified" value="0"/>
+                        
+                                    
+                                    <div class="row">       
+                                        <div class="col-lg-2">
+                                            <div class="radio">
+            <f:label path="classified"  >Klasifikováno:
             
-        </span>
+            <f:radiobutton path="classified" value="0" class="form-cont"/>
+             </f:label>
+                                            </div>
+                                        </div>
+                                            <div class="col-lg-1">
         <f:select path="mark" items="${form.map}"  class="form-control "/>
         <f:hidden path="id"/>
-      
-    </div>
+                                            </div>
                                     </div>
+    
         <br/>
-        
-       <button class="btn btn-success" type="submit"><span class="glyphicon glyphicon-pencil"></span><strong> Změnit známku</strong></button>
+        <div class="btn-group"> 
+       <button class="btn btn-primary" type="submit"><strong> Změnit známku</strong></button>
+        <a href="<c:url value="/teacher/classification/studentInfo.htm?idSubject=${testResult.test.id_subject.id}&idStudent=${testResult.student.id}&next=0&previous=0"/>"
+           class="btn btn-danger"><strong> Zrušit </strong>       </a>
+        </div>
             </f:form>
        
         

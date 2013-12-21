@@ -4,7 +4,9 @@
  */
 package cz.cvut.hotkomar.service.checkAndMake;
 
+import cz.cvut.hotkomar.model.entity.StudentParent;
 import cz.cvut.hotkomar.service.manager.StudentMan;
+import cz.cvut.hotkomar.service.manager.StudentParentMan;
 import cz.cvut.hotkomar.service.manager.TeacherMan;
 import cz.cvut.hotkomar.service.manager.TestMan;
 import cz.cvut.hotkomar.service.message.FormMessage;
@@ -24,6 +26,8 @@ public class CheckForm {
     private StudentMan studentMan;
     private TeacherMan teacherMan;
     private TestMan testMan;
+    private StudentParentMan studentParentMan;
+    
     private FormMessage message;
     
     @ModelAttribute("message")
@@ -47,18 +51,25 @@ public class CheckForm {
     public void setTeacherMan(TeacherMan teacherMan) {
         this.teacherMan = teacherMan;
     }
+
+
+    public void setTestMan(TestMan testMan) {
+        this.testMan = testMan;
+    }
 @Autowired
-    public void setTeMan(TestMan teMan) {
-        this.testMan = teMan;
+    public void setStudentParentMan(StudentParentMan studentParentMan) {
+        this.studentParentMan = studentParentMan;
     }
     
     
     
     public boolean uniqueLogin(String login) {
-        if (studentMan.findByLogin(login.toLowerCase()) == null && teacherMan.findByLogin(login.toLowerCase()) == null ) {
+        if (studentMan.findByLogin(login.toLowerCase()) == null && teacherMan.findByLogin(login.toLowerCase()) == null && studentParentMan.findByLogin(login.toLowerCase())==null) {
+            System.out.println("NENAŠEL JSEM LOGIN");
             return true;
         }
        // message.setNegativeMes("Uživatel s tímto přihlašovacím jménem již existuje.");
+         System.out.println("NAŠEL JSEM LOGIN");
         return false;
     }
     

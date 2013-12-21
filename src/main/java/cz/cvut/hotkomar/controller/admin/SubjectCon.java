@@ -21,6 +21,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 
 @Controller
+@Secured(value = {"ROLE_ADMIN"})
 public class SubjectCon implements AdminControllerImp{
 //    @RequestMapping (value="/admin/subjects.htm")
 //    public String teachersGet (ModelMap m)
@@ -196,7 +198,7 @@ private DateFunction dateFunction;
     {
         //chyba
     }
-    Subject formToSubject = formToSubject(form, findById);
+   // Subject formToSubject = formToSubject(form, findById);
     subjectMan.edit(findById, true);
         return"redirect:infoSubject.htm?id="+form.getId();
     }

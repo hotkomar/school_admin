@@ -4,6 +4,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <div class="navbar navbar-inverse navbar-fixed-top">
 <div class="container">
 <div class="navbar-header">
@@ -12,9 +13,12 @@
 <span class="icon-bar"></span>
 <span class="icon-bar"></span>
 </button>
-    <a class="navbar-brand" href="<c:url value="/index.htm"/>">School admin</a>
+    <a class="navbar-brand" href="<c:url value="/index.htm"/>"><strong>School admin: </strong> <span style="color: white">Uživatel 
+            <sec:authentication property="principal.username" /><span></a>
+    
 </div>
 <div class="navbar-collapse collapse">
+    <sec:authorize ifAnyGranted="ROLE_STUDENT">
 <ul class="nav navbar-nav">
     <li <c:if test="${profil}">class="active"</c:if> >
     
@@ -23,21 +27,68 @@
 <li <c:if test="${classification}">class="active"</c:if>>
 <a href="<s:url value="/student/classification.htm"/>">Klasifikace</a>
 </li>
-<li <c:if test="${head}">class="active"</c:if> >
-<a href="#contact">Třída</a>
-</li>
+
 <li <c:if test="${test}">class="active"</c:if>>
     <a href="<s:url value="/student/test.htm"/>">Testy</a>
 </li>
-<li <c:if test="${student}">class="active"</c:if><c:if test="${teacher}">class="active"</c:if> <c:if test="${clazz}">class="active"</c:if><c:if test="${subject}">class="active"</c:if>>
-    <a href="">Administrace</a>
-</li>
+
 <li <c:if test="${school}">class="active"</c:if>>
-    <a href="../school.htm">Škola</a>
+    <a href="<c:url value="/school.htm"/>">Škola</a>
       
 </li>
 </ul>
+    </sec:authorize>
+    <sec:authorize ifAnyGranted="ROLE_TEACHER">
+    <ul class="nav navbar-nav">
+    <li <c:if test="${profil}">class="active"</c:if> >
+    
+    <a href="<s:url value="/teacher/personInfo.htm"/>">Profil</a>    
+</li>
+<li <c:if test="${classification}">class="active"</c:if>>
+<a href="<s:url value="/teacher/classification.htm"/>">Klasifikace</a>
+</li>
+<li <c:if test="${head}">class="active"</c:if> >
+    <a href="<c:url value="/teacher/headClass.htm"/>">Třída</a>
+</li>
+<li <c:if test="${test}">class="active"</c:if>>
+    <a href="<s:url value="/teacher/tests.htm"/>">Testy</a>
+</li>
+<sec:authorize  ifAnyGranted="ROLE_ADMIN">
+<li <c:if test="${student}">class="active"</c:if><c:if test="${teacher}">class="active"</c:if> <c:if test="${clazz}">class="active"</c:if><c:if test="${subject}">class="active"</c:if>>
+    <a href="<c:url value="/admin/students.htm"/>">Administrace</a>
+</li>
+</sec:authorize>
+<li <c:if test="${school}">class="active"</c:if>>
+    <a href="<c:url value="/school.htm"/>">Škola</a>
+      
+</li>
+</ul>
+    </sec:authorize>
+    <sec:authorize ifAnyGranted="ROLE_PARENT">
+    <ul class="nav navbar-nav">
+    <li <c:if test="${profil}">class="active"</c:if> >
+    
+    <a href="<s:url value="/parent/personInfo.htm"/>">Profil</a>    
+</li>
+<li <c:if test="${classification}">class="active"</c:if>>
+<a href="<s:url value="/parent/classification.htm"/>">Klasifikace</a>
+</li>
 
+<li <c:if test="${school}">class="active"</c:if>>
+    <a href="<c:url value="/school.htm"/>">Škola</a>
+      
+</li>
+</ul>
+    </sec:authorize>
+     <p class="navbar-text pull-right">
+         
+     <ul class="pager">
+         
+         
+         
+         <li class="next">             <a  href="<s:url value="/logout.htm"/>"> <strong>Odhlásit</strong></a></li>
+     </ul>
+</p>
 </div>
 </div>
 </div>

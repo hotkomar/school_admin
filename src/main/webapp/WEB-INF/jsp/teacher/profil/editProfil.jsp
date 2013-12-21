@@ -32,10 +32,7 @@
                 
                 </div>
             <div class="col-lg-4">
-                <a href="<c:url value="editTeacher.htm"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat profil</strong></a>
-                
-                <a href="<c:url value="passTeacher.htm"/>" class=" btn btn-default " style="color: white; background: black"> <span class="glyphicon glyphicon-wrench"></span><strong> Změnit heslo</strong></a>
-                        
+                   
             </div>
             </div>
                 <div class="row">
@@ -101,13 +98,13 @@
                         
                         <f:hidden path="id" />
                         
-                           
+                        <div class="btn btn-group">    
                         <button class="btn btn-primary" type="submit">
                Editovat kontakt
             </button>
             <a class="btn btn-danger" href="<c:url value="/teacher/personInfo.htm"/>"> Zrušit</a>
             <button class="btn btn-default" type="reset">Zrušit změny</button>
-                        
+                        </div>         
                         
                 </f:form>
                 </div>

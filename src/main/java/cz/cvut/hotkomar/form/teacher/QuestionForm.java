@@ -4,6 +4,7 @@
  */
 package cz.cvut.hotkomar.form.teacher;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
@@ -19,7 +20,7 @@ import org.springframework.format.annotation.NumberFormat;
  *
  * @author Maru
  */
-public class QuestionForm {
+public class QuestionForm implements Serializable {
     private Long id;
     @NotEmpty(message = "Musíte zadat otázku.")
     @Size(max=1024,message="Otázka může obsahovat maximálně 1024 znaků")

@@ -140,7 +140,9 @@ public class Pagination implements Serializable{
       setFirstItem();
      
         //   list.subList(firstItem, firstItem+itemsOnPage);
-        if(page==1){
+      
+          
+        if(page==1 ||page==0){
          actualPage   = list.subList(0,itemsOnPage);
 }
         else{

@@ -72,13 +72,13 @@
                          
                         
                         <f:hidden path="id"/>
-                           
+                        <div class="btn-group"> 
                         <button class="btn btn-primary" type="submit">
                Potvrdit
             </button>
             <a class="btn btn-danger" href="<c:url value="infoTest.htm?test=${form.id}"/>">Zrušit</a>
             <button class="btn btn-default" type="reset">Vymazat heslo</button>
-                        
+                        </div>            
                         
                 </f:form>
                   

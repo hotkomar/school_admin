@@ -27,7 +27,7 @@
         <div class="panel-body">
             <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
             
-            <f:form enctype="multipart/form-data"  class="form-horizontal" commandName="form" action="changePasswordStudent.htm" method="POST">
+            <f:form enctype="multipart/form-data"  class="form-horizontal" commandName="form" action="changePasswordTeacher.htm" method="POST">
                     
                         
                         <div class="form-group">
@@ -59,7 +59,7 @@
                         <f:hidden path="id" />   
                         
                             
-                    
+                        <div class="btn-group">
                         
                            
                         <button class="btn btn-primary" type="submit">
@@ -67,7 +67,7 @@
             </button>
             <a class="btn btn-danger" href="<c:url value="/admin/infoTeacher.htm?id=${form.id}"/>"> Zrušit</a>
             <button type="reset" class="btn btn-default">Vymazat formulář</button>
-                        
+                        </div>         
                         
                 </f:form>
             

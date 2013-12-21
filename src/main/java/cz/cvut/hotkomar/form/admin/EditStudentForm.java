@@ -68,6 +68,7 @@ public class EditStudentForm {
     private String phoneNumber;
     // number of fax
     private String fax;
+    @NotEmpty(message = "E-mail nesmí být prázdný.")
      @Email(message = "E-mail není ve správném formátu.")
     private String motherMail;
       @Email(message = "E-mail není ve správném formátu.")

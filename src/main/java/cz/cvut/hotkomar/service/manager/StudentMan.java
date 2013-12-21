@@ -89,12 +89,12 @@ public class StudentMan extends GeneralManager<Student> {
            System.out.println("vracím : "+list.size());
 //          tx.commit();
       } catch (Exception e) {
-//          if(tx != null){ tx.rollback();}
+          System.out.println("findByClass_id: has exception");
       }
       return list;
   }
    
-    public List<Student> findByLogin (String login)
+    public Student findByLogin (String login)
   {
       System.out.println("jsem ve třídě findByClass_id");
       Session session= getSession();
@@ -106,13 +106,15 @@ public class StudentMan extends GeneralManager<Student> {
           //query.setParameter("visible",true);
           query.setParameter("login",login);
           list =query.list();
-           
+           if(!list.isEmpty())
+           {
+               return list.get(0);
+           }
 //          tx.commit();
       } catch (Exception e) {
-//          if(tx != null){ tx.rollback();}
-          return new ArrayList<Student>();
+         System.out.println("findByLogin has exception");
           
       }
-      return list;
+      return null;
   }
 }

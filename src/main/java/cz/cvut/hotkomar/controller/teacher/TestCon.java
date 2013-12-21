@@ -51,6 +51,10 @@ import org.apache.bcel.verifier.statics.DOUBLE_Upper;
 import org.omg.CORBA.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingErrorProcessor;
@@ -68,6 +72,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * @author Marie Hoťková
  */
 @Controller
+@Secured(value = {"ROLE_TEACHER"})
 public class TestCon {
    private SubjectOfClassMan subjectOfClassMan;
    private TeacherMan teacherMan;
@@ -157,7 +162,8 @@ private FormMessage message;
         this.studentMan = sutdentMan;
     }
    
-   
+   @Autowired
+    private ShaPasswordEncoder passwordEncoder;
     
     @RequestMapping(value="/teacher/addTest.htm", method = RequestMethod.GET)
     public String addTestGET (ModelMap m,HttpSession session, @ModelAttribute("form") NewTestForm form)
@@ -168,7 +174,7 @@ private FormMessage message;
         return"teacher/test/addTest";
     }
     @RequestMapping(value = "/teacher/addTestLoad.htm")
-    public String addTestForm(ModelMap m, HttpSession s, @RequestParam(value = "ok",required = false) Boolean ok){   
+    public String addTestForm(ModelMap m, HttpSession s, @RequestParam(value = "ok",required = false) Boolean ok,Authentication auth){   
         System.out.println("LOAD FORM");
         /*
          * *********************************************************
@@ -179,7 +185,15 @@ private FormMessage message;
         m.addAttribute("org.springframework.validation.BindingResult.form", s.getAttribute("addNewTestErrors"));
         
         
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
         m.addAttribute("listSubject",getSubjects(findById));
         m.addAttribute("form", (NewTestForm) s.getAttribute("addTestContainer"));
         if(ok != null){
@@ -249,15 +263,24 @@ private FormMessage message;
         return null;
 }
    @RequestMapping(value="/teacher/saveTest.htm", method= RequestMethod.GET)
-   public String saveTestPost(ModelMap m, HttpSession s)
+   public String saveTestPost(ModelMap m, HttpSession s,Authentication auth)
    {
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
        BindingResult errors = (BindingResult) s.getAttribute("addNewTestErrors");
        if(errors.hasErrors()){
            return "redirect:addTestLoad.htm?ok=false";
        }
        System.out.println("SAVE");
        NewTestForm attribute =(NewTestForm) s.getAttribute("addTestContainer");
-       Test formToTest = formToTest(attribute,new Test(), Long.parseLong("1"));
+       Test formToTest = formToTest(attribute,new Test(), findById.getId());
        if(formToTest==null)
        {
            return"admin/errorHups";
@@ -268,9 +291,17 @@ private FormMessage message;
        return"redirect:addTestLoad.htm?ok=true"; //jenom kdyz je validni
    }
     @RequestMapping  (value = "/teacher/tests.htm")
-    public String viewTest (ModelMap m,@RequestParam(defaultValue = "1", value = "page", required = false) Integer page,HttpSession session)
+    public String viewTest (ModelMap m,@RequestParam(defaultValue = "1", value = "page", required = false) Integer page,HttpSession session,Authentication auth)
     {String attribute =(String)session.getAttribute("testFullText");
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
        List<SubjectOfClass> findByTeacher = subjectOfClassMan.findByTeacher(findById);
        if(findByTeacher.size()>0)
        {
@@ -339,9 +370,17 @@ private FormMessage message;
     
     
     @RequestMapping(value = "/teacher/infoTest.htm")
-    public String infoTest (@RequestParam (value="test", required = true)Long id, ModelMap m)
+    public String infoTest (@RequestParam (value="test", required = true)Long id, ModelMap m,Authentication auth)
     {
-       Teacher teacher = teacherMan.findById(Long.parseLong("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);            
+        if(teacher==null){
+            return"admin/errorHups";
+        }
        Test findById = testMan.findByIDTeacher(id, teacher);
        if(findById==null || findById.getTaught())
        {
@@ -355,14 +394,26 @@ private FormMessage message;
         return"/teacher/test/infoTest";
     }
     @RequestMapping(value = "/teacher/infoTest/results.htm")
-    public String testResults (@RequestParam(value = "test", required = true)Long id,ModelMap m)
+    public String testResults (@RequestParam(value = "test", required = true)Long id,ModelMap m,Authentication auth)
     {
         
-       Teacher teacher = teacherMan.findById(Long.parseLong("1"));
+      if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);            
+        if(teacher==null){
+            return"admin/errorHups";
+        }
        Test findById = testMan.findByIDTeacher(id, teacher);
+       if(findById==null)
+       {
+           return"admin/errorHups";
+       }
        // List<TestResult> findByTest = testResultMan.findByTest(findById);
        List<SubjectOfClass> findBySubjectTeacher = subjectOfClassMan.findBySubjectTeacher(findById.getId_subject(),findById.getId_teacher());
-       if(findById==null || findById.getTaught() )
+       if(findById.getTaught() )
        {
            return "/admin/errorHups";
        }
@@ -379,10 +430,17 @@ private FormMessage message;
         return"/teacher/test/testResults";
     }
     @RequestMapping(value = "/teacher/infoTest/classResult.htm")
-    public String classResult(@RequestParam(value = "classID", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,ModelMap m)
+    public String classResult(@RequestParam(value = "classID", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,ModelMap m,Authentication auth)
     {
-        System.out.println("lkdsjkdslfjlkdsjfdslkfjlksdjfdlkjdsaflksajkdsalůjldsjlfdsůafdsj");
-        Teacher teacher = teacherMan.findById(Long.parseLong("1"));
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);            
+        if(teacher==null){
+            return"admin/errorHups";
+        }
        Test findById = testMan.findByIDTeacher(idTest, teacher);
         StudentClass clazz = studentClassMan.findById(id);
         if(findById==null || clazz==null || findById.getTaught())
@@ -404,9 +462,17 @@ private FormMessage message;
         return"teacher/test/classResult";
     }
     @RequestMapping(value = "/teacher/infoTest/removeMark.htm")
-    public String removeResult(@RequestParam(value = "result", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,@RequestParam(value = "idClass", required = true)Long clazzID)
+    public String removeResult(@RequestParam(value = "result", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,@RequestParam(value = "idClass", required = true)Long clazzID,Authentication auth)
     {
-        Teacher teacher = teacherMan.findById(Long.parseLong("1"));
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);            
+        if(teacher==null){
+            return"admin/errorHups";
+        }
        Test findById = testMan.findByIDTeacher(idTest, teacher);
 //        StudentClass clazz = studentClassMan.findById(id);
        TestResult findById1 = testResultMan.findById(id);
@@ -419,9 +485,18 @@ private FormMessage message;
         return"redirect:studentResult.htm?student="+findById1.getStudent().getId()+"&test="+idTest+"&idClass="+clazzID;
     }
     @RequestMapping(value = "/teacher/infoTest/newResult.htm")
-    public String newResult(@RequestParam(value = "student", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,@RequestParam(value = "idClass", required = true)Long clazzID)
+    public String newResult(@RequestParam(value = "student", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,@RequestParam(value = "idClass", required = true)Long clazzID,Authentication auth)
     {
-        Teacher teacher = teacherMan.findById(Long.parseLong("1"));
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);
+        if(teacher == null)
+        {
+            return "admin/errorHups";
+        }
        Test findById = testMan.findByIDTeacher(idTest, teacher);
        //        StudentClass clazz = studentClassMan.findById(id);
        Student student = studentMan.findById(id);
@@ -436,16 +511,29 @@ private FormMessage message;
         return"redirect:studentResult.htm?student="+findById1.getStudent().getId()+"&test="+idTest+"&idClass="+clazzID;
     }
     @RequestMapping(value = "/teacher/infoTest/studentResult.htm", method = RequestMethod.GET)
-    public String studentResult(@RequestParam(value = "student", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,@RequestParam(value="idClass",required = true)Long clazz, ModelMap m)
+    public String studentResult(@RequestParam(value = "student", required = true) Long id,@RequestParam(value ="test", required = true)Long idTest,@RequestParam(value="idClass",required = true)Long clazz, ModelMap m,Authentication auth)
     {
-        Teacher teacher = teacherMan.findById(Long.parseLong("1"));
+        //ověřím si učitele
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);
+        if(teacher == null)
+        {
+            return "admin/errorHups";
+        }
+        //najdu test podle učitele a jeho id
        Test findById = testMan.findByIDTeacher(idTest, teacher);
+       //najdu sutdenta 
         Student student = studentMan.findById(id);
         if(findById==null || student==null || findById.getTaught())
         {
             return"admin/errorHups";
         }
-       List<TestResult> findByStudent = testResultMan.findByStudent(student);
+       // List<TestResult> findByStudent = testResultMan.findByStudent(student);
+       List<TestResult> findByStudent = testResultMan.findByStudentTest(student, findById);
        List<ResultTestForm> forms = new ArrayList<ResultTestForm>();
        for(TestResult r :findByStudent)
        {
@@ -470,9 +558,18 @@ private FormMessage message;
         return"teacher/test/studentResults";
     }
     @RequestMapping(value = "/teacher/infoTest/studentResult.htm", method = RequestMethod.POST)
-    public String studentResultPost(@ModelAttribute(value = "form") ChangeMarkWebForm form)
+    public String studentResultPost(@ModelAttribute(value = "form") ChangeMarkWebForm form,Authentication auth)
     {
-        Teacher teacher = teacherMan.findById(Long.valueOf("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);
+        if(teacher == null)
+        {
+            return "admin/errorHups";
+        }
        TestResult findById = testResultMan.findById(form.getId());
        if(findById==null)
        {
@@ -484,9 +581,18 @@ private FormMessage message;
         return"redirect:studentResult.htm?student="+findById.getStudent().getId()+"&test="+findById.getTest().getId()+"&idClass="+findById.getStudent().getId_class().getId();
     }
     @RequestMapping(value = "/teacher/removeTest.htm")
-    public String removeTest(@RequestParam(value = "id", required = true)Long id)
+    public String removeTest(@RequestParam(value = "id", required = true)Long id,Authentication auth)
     {
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+      if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);
+        if(findById == null)
+        {
+            return "admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(id,findById);
        if(findByIDTeacher==null || findByIDTeacher.getTaught())
        {
@@ -503,9 +609,18 @@ private FormMessage message;
         
     }
     @RequestMapping(value = "/teacher/infoTest/statistic.htm")
-    public String viewStatistic (@RequestParam(value = "test", required = true)Long id,ModelMap m)
+    public String viewStatistic (@RequestParam(value = "test", required = true)Long id,ModelMap m,Authentication auth)
     {
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);
+        if(findById == null)
+        {
+            return "admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(id, findById);
        if(findByIDTeacher==null || findByIDTeacher.getTaught())
        {
@@ -514,12 +629,12 @@ private FormMessage message;
        //       Integer findByAvarageActualMarkClass = testResultMan.findByAvarageActualMarkClass(findByIDTeacher, Short.valueOf("2"));
        //        System.out.println("count je "+findByAvarageActualMarkClass);
        List<Double> statisticMark = statisticMark(findByIDTeacher);
-       Double findByAvarageActualMark = testResultMan.findByAvarageActualMarkClass(findByIDTeacher, studentClassMan.findById(Long.valueOf("1")));
+      // Double findByAvarageActualMark = testResultMan.findByAvarageActualMarkClass(findByIDTeacher, studentClassMan.findById(Long.valueOf("1")));
       // Double findByAvarageActualMarkClass = testResultMan.findByAvarageActualMarkClass(findByIDTeacher, studentClassMan.findById(Long.valueOf("1")));
        Map<StudentClass, Double> findByAvarageActualMarkClass1 = testResultMan.findByAvarageActualMarkClass(findByIDTeacher);
        
        
-       m.addAttribute("prumer", findByAvarageActualMark);
+      // m.addAttribute("prumer", findByAvarageActualMark);
        m.addAttribute("ListMarks", statisticMark);
         m.addAttribute("markCount",testResultMan.findByAvarageActualMark(findByIDTeacher));
        m.addAttribute("mark",pointArray(findByIDTeacher));
@@ -532,9 +647,18 @@ private FormMessage message;
         return"teacher/test/testStatistic";
     }
     @RequestMapping(value = "/teacher/infoTest/removeClassRresult.htm")
-    public String removeClassResults (@RequestParam(value = "idClass", required = true)Long id,@RequestParam(value = "test",required = true) Long testId,ModelMap m)
+    public String removeClassResults (@RequestParam(value = "idClass", required = true)Long id,@RequestParam(value = "test",required = true) Long testId,ModelMap m,Authentication auth)
     {
-       Teacher teacher = teacherMan.findById(Long.valueOf("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher teacher  = teacherMan.findByLogin(login);
+        if(teacher == null)
+        {
+            return "admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(testId, teacher);
        StudentClass findById = studentClassMan.findById(id);
        
@@ -547,9 +671,18 @@ private FormMessage message;
        return"redirect:results.htm?test="+testId;
     }
     @RequestMapping(value = "/teacher/changeTestPass.htm", method = RequestMethod.GET)
-    public String changeTest(@RequestParam(value = "id", required = true)Long id, ModelMap m )
+    public String changeTest(@RequestParam(value = "id", required = true)Long id, ModelMap m,Authentication auth )
     {
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+       if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);
+        if(findById == null)
+        {
+            return "admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(id,findById);
        if(findByIDTeacher==null ||findByIDTeacher.getTaught())
        {
@@ -571,15 +704,25 @@ private FormMessage message;
         return"teacher/test/pass";
     }
     @RequestMapping(value = "/teacher/changeTestPass.htm", method = RequestMethod.POST)
-    public String changeTestPost(@Valid@ModelAttribute("form") ChangePassForm form, BindingResult error, ModelMap m)
-    {Teacher findById = teacherMan.findById(Long.valueOf("1"));
+    public String changeTestPost(@Valid@ModelAttribute("form") ChangePassForm form, BindingResult error, ModelMap m,Authentication auth)
+    {
+        
+        if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(form.getId(), findById);
     if(findByIDTeacher==null ||findByIDTeacher.getTaught())
         {
             return"admin/errorHups";
         }
-            
-        if(!checkForm.corectPassword(form.getActualPass(),findById.getPassword()) || error.hasErrors())
+       String hash = passwordEncoder.encodePassword(form.getActualPass(),findById.getLogin());
+        if(!checkForm.corectPassword(hash,findById.getPassword()) || error.hasErrors())
         {
            boolean pass=false;
        if(findByIDTeacher.getPassword()!=null)
@@ -599,13 +742,22 @@ private FormMessage message;
        testMan.edit(findByIDTeacher,true);
         
         
-        return"redirect:/teacher/infoTest.htm?id="+form.getId();
+        return"redirect:/teacher/infoTest.htm?test="+form.getId();
     }
     @RequestMapping(value = "/teacher/viewPass.htm", method = RequestMethod.GET)
-    public String viewPass(@RequestParam(value = "id", required = true)Long id, ModelMap m)
+    public String viewPass(@RequestParam(value = "id", required = true)Long id, ModelMap m, Authentication auth)
     {
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+      if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(id,findById);
+       
        if(findByIDTeacher==null || findByIDTeacher.getPassword()==null ||findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
@@ -626,15 +778,24 @@ private FormMessage message;
         return"teacher/test/viewPass";
     }
     @RequestMapping(value = "/teacher/viewPass.htm", method = RequestMethod.POST)
-    public String viewPassPost(@Valid@ModelAttribute("form") CheckPassForm form,BindingResult error, ModelMap m)
+    public String viewPassPost(@Valid@ModelAttribute("form") CheckPassForm form,BindingResult error, ModelMap m, Authentication auth)
     {
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+      if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(form.getId(), findById);
        if(findByIDTeacher==null || findByIDTeacher.getTaught())
        {
            return"admin/errorHups";
        }
-       if(error.hasErrors()|| !checkForm.corectPassword(findById.getPassword(),form.getPassword()))
+        String hash = passwordEncoder.encodePassword(form.getPassword(),findById.getLogin());
+       if(error.hasErrors()|| !checkForm.corectPassword(findById.getPassword(),hash))
        {
           
            m.addAttribute("view", true);
@@ -656,9 +817,17 @@ private FormMessage message;
         return"teacher/test/viewPassword";
     }
     @RequestMapping(value = "/teacher/removePass.htm", method = RequestMethod.POST)
-    public String removePassPost(@Valid @ModelAttribute("form") RemovePasswordForm form, ModelMap m, BindingResult error)
+    public String removePassPost(@Valid @ModelAttribute("form") RemovePasswordForm form, BindingResult error,ModelMap m, Authentication auth)
     {
-       Teacher findById = teacherMan.findById(Long.valueOf("1"));
+      if (auth == null) {
+            return "admin/errorHups";
+        }
+        User u = (User) auth.getPrincipal(); //if auth != null
+        String login = u.getUsername();
+        Teacher findById  = teacherMan.findByLogin(login);            
+        if(findById==null){
+            return"admin/errorHups";
+        }
        Test findByIDTeacher = testMan.findByIDTeacher(form.getId(), findById);
        if(findByIDTeacher==null ||findByIDTeacher.getTaught())
        {
@@ -743,11 +912,11 @@ private FormMessage message;
             answer.setAnswer(answerForm.getAnswer());
             answer.setCorrect(answerForm.getCorrect());
             answer.setVisible(Boolean.TRUE);
-            answerMan.add(answer, true);
+            answerMan.add(answer, false);
             answers.add(answer);
         }
         q.setAnswers(answers);
-        questionMan.edit(q, true);
+        questionMan.edit(q, false);
     }
     
     

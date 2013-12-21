@@ -61,13 +61,13 @@
                             
                     
                         
-                           
+                        <div class="btn-group">           
                         <button class="btn btn-primary" type="submit">
                 Změnit heslo
             </button>
             <a class="btn btn-danger" href="<c:url value="/admin/infoStudent.htm?id=${form.id}"/>"> Zrušit</a>
             <a class="btn btn-default">Vymazat formulář</a>
-                        
+                        </div>           
                         
                 </f:form>
             

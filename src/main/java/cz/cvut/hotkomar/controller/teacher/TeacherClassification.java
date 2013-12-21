@@ -206,16 +206,20 @@ public class TeacherClassification {
             return "admin/errorHups";
         }
         Student student = studentMan.findById(idStudent);
+        if(student==null)
+        {
+            return"admin/errorHups";
+        }
         List<Student> listOfStudents = studentMan.findByClass_id(student.getId_class());
         SubjectOfClass subject = subjectOfClassMan.findByClassSubjectTeacherVisibleID(student.getId_class().getId(), idSubject,teacher.getId());
-        if(subject ==null || student==null)
+        if(subject ==null)
         {
             return"admin/errorHups";
         }
         //první známku z předmětu
         Calendar findByStudentMINDate = testResultMan.findByStudentMINDate(student, subject.getId_subject());
         // testResult s datumem
-        List <TestResultClassificationForm> list = new ArrayList<TestResultClassificationForm>();
+        //List <TestResultClassificationForm> list = new ArrayList<TestResultClassificationForm>();
         //seznam školních let
         List<String> listOfSemester = new ArrayList<String>();
         List<TestResult> secondSemester = new ArrayList<TestResult>();
@@ -238,12 +242,12 @@ public class TeacherClassification {
              split = semester.split("/");
         }
         System.out.println("plist "+split[0]+" "+split[1]);
-            Calendar first = dateFunction.setDBDate(1, 9, Integer.valueOf(split[0]));
-            Calendar last = dateFunction.setDBDate(31, 1, Integer.valueOf(split[1]));
+            Calendar first = dateFunction.setDBDate(1, 9, Integer.parseInt(split[0]));
+            Calendar last = dateFunction.setDBDate(31, 1, Integer.parseInt(split[1]));
             firstSemester = testResultMan.findByStudentBetween(student, subject.getId_subject(),first, last);
             System.out.println("firstSemester "+firstSemester);
-            Calendar secondFirst = dateFunction.setDBDate(1,2, Integer.valueOf(split[1]));
-            Calendar secondLast = dateFunction.setDBDate(31,8, Integer.valueOf(split[1]));
+            Calendar secondFirst = dateFunction.setDBDate(1,2, Integer.parseInt(split[1]));
+            Calendar secondLast = dateFunction.setDBDate(31,8, Integer.parseInt(split[1]));
             secondSemester = testResultMan.findByStudentBetween(student, subject.getId_subject(),secondFirst, secondLast);
         }
         List<TestResultClassificationForm> firstForm = new ArrayList<TestResultClassificationForm>();
@@ -304,7 +308,7 @@ public class TeacherClassification {
     @RequestMapping(value = "/teacher/classification/studentInfo/changeWebMark.htm", method = RequestMethod.GET)
     public String changeWebMark(@RequestParam(value = "idResult",required = true)Long id,ModelMap m,Authentication auth){
         TestResult findById = testResultMan.findById(id);
-        if (auth == null) {
+        if (auth == null || findById==null) {
             return "admin/errorHups";
         }
         User u = (User) auth.getPrincipal(); //if auth != null
@@ -315,7 +319,7 @@ public class TeacherClassification {
             return "admin/errorHups";
         }
         List<SubjectOfClass> findByClassSubjectTeacher = subjectOfClassMan.findByClassSubjectTeacher(findById.getStudent().getId_class(), findById.getTest().getId_subject(), findById1);
-        if(findById==null || findByClassSubjectTeacher.isEmpty())
+        if( findByClassSubjectTeacher.isEmpty())
         {
            return"admin/errorHups";
         }
@@ -338,8 +342,12 @@ public class TeacherClassification {
             return "admin/errorHups";
         }
         TestResult findById = testResultMan.findById(form.getId());
+        if(findById==null)
+        {
+          return"admin/errorHups";  
+        }
         List<SubjectOfClass> findByClassSubjectTeacher = subjectOfClassMan.findByClassSubjectTeacher(findById.getStudent().getId_class(), findById.getTest().getId_subject(), teacher);
-        if(findById==null || findByClassSubjectTeacher.isEmpty())
+        if(findByClassSubjectTeacher.isEmpty())
         {
            return"admin/errorHups";
         }
@@ -351,7 +359,7 @@ public class TeacherClassification {
     @RequestMapping(value ="/teacher/classification/studentInfo/changeMark.htm", method = RequestMethod.GET)
     public String changeMarkGET (@RequestParam(value = "idResult",required = true)Long id,ModelMap m,Authentication auth){
          TestResult findById = testResultMan.findById(id);
-        if (auth == null) {
+        if (auth == null || findById==null) {
             return "admin/errorHups";
         }
         User u = (User) auth.getPrincipal(); //if auth != null
@@ -362,7 +370,7 @@ public class TeacherClassification {
             return "admin/errorHups";
         }
         List<SubjectOfClass> findByClassSubjectTeacher = subjectOfClassMan.findByClassSubjectTeacher(findById.getStudent().getId_class(), findById.getTest().getId_subject(), findById1);
-        if(findById==null || findByClassSubjectTeacher.isEmpty())
+        if(findByClassSubjectTeacher.isEmpty())
         {
            return"admin/errorHups";
         }
@@ -394,8 +402,12 @@ public class TeacherClassification {
             return "admin/errorHups";
         }
         TestResult findById = testResultMan.findById(form.getId());
+        if(findById==null)
+        {
+            return"admin/errorHups";
+        }
         List<SubjectOfClass> findByClassSubjectTeacher = subjectOfClassMan.findByClassSubjectTeacher(findById.getStudent().getId_class(), findById.getTest().getId_subject(), teacher);
-        if(findById==null || findByClassSubjectTeacher.isEmpty())
+        if(findByClassSubjectTeacher.isEmpty())
         {
            return"admin/errorHups";
         }
@@ -429,7 +441,7 @@ public class TeacherClassification {
         SubjectOfClass subject = subjectOfClassMan.findById(idSubject);
        
       
-        if(teacher ==null || findById==null || subject==null || !subject.getId_class().getId().equals(findById.getId_class().getId()))
+        if(findById==null || subject==null || !subject.getId_class().getId().equals(findById.getId_class().getId()))
         {
             
            return"admin/errorHups";
@@ -520,7 +532,7 @@ public class TeacherClassification {
         }
         StudentClass findById = studentClassMan.findById(idClass);
         SubjectOfClass findById1 = subjectOfClassMan.findById(idSubject);
-        if(teacher==null || findById==null || findById1==null || !findById.getId().equals(findById1.getId_class().getId()) || !findById1.getId_teacher().getId().equals(teacher.getId()))
+        if(findById==null || findById1==null || !findById.getId().equals(findById1.getId_class().getId()) || !findById1.getId_teacher().getId().equals(teacher.getId()))
         {
             return"admin/errorHups";
         }

@@ -11,7 +11,13 @@
 
 <%@include file="../header.jspf" %>
 <%@include file="../headerMenu.jspf" %>
-<%@include file="leftMenu.jspf" %>
+<!--%@include file="leftMenu.jspf" %-->
+<div class="jumbotron" style="background-color: steelblue; color: white">
+<div class="container">
+    
+    <h1>Error</h1>
+</div>
+</div>
 <div class="container">
 <div class="row">
     <div class=" panel panel-danger">

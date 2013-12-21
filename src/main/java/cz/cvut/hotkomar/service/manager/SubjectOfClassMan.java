@@ -83,6 +83,55 @@ public class SubjectOfClassMan extends GeneralManager<SubjectOfClass>{
        
 
     }    
+   public List<SubjectOfClass> findByClass( StudentClass clazz) {
+        
+        System.out.println("jsem ve třídě findByClass_id");
+      Session session= getSession();
+//      Transaction tx=null;
+      List<SubjectOfClass> list = new ArrayList<SubjectOfClass>();
+      try {
+        Query query = session.createQuery("SELECT u FROM SubjectOfClass AS u WHERE  u.id_class = :id_class AND u.visible = true");
+            
+            query.setParameter("id_class", clazz);
+           list = query.list();
+         //  System.out.println("vracím : "+list.size());
+//          tx.commit();
+      } catch (Exception e) {
+//          if(tx != null){ tx.rollback();}
+      }
+      return list;
+        
+        
+       
+
+    }    
+   public SubjectOfClass findByClassID( StudentClass clazz,Long id) {
+        
+        System.out.println("jsem ve třídě findByClass_id");
+      Session session= getSession();
+//      Transaction tx=null;
+      List<SubjectOfClass> list;
+      try {
+        Query query = session.createQuery("SELECT u FROM SubjectOfClass AS u WHERE  u.id_class = :id_class AND u.id= :id_subjectOfClass AND u.visible = true");
+            
+            query.setParameter("id_class", clazz);
+            query.setParameter("id_subjectOfClass", id);
+           list = query.list();
+         //  System.out.println("vracím : "+list.size());
+//          tx.commit();
+           if(!list.isEmpty())
+           {
+               return list.get(0);
+           }
+      } catch (Exception e) {
+//          if(tx != null){ tx.rollback();}
+      }
+      return null;
+        
+        
+       
+
+    }    
     public List<SubjectOfClass> findSubjectByTeacher( Teacher t) {
         
         System.out.println("jsem ve třídě findByClass_id");
@@ -119,8 +168,8 @@ public List<SubjectOfClass> findByClassSubjectTeacher(StudentClass c, Subject s,
            list = query.list();
          //  System.out.println("vracím : "+list.size());
 //          tx.commit();
-      } catch (Exception e) {
-//          if(tx != null){ tx.rollback();}
+      } catch (Exception e) {   
+           System.out.println("findByClassSubjectTeacher has exception");
       }
       return list;
         
@@ -144,7 +193,7 @@ public List<SubjectOfClass> findByClassSubjectTeacherVisible(StudentClass c, Sub
          //  System.out.println("vracím : "+list.size());
 //          tx.commit();
       } catch (Exception e) {
-//          if(tx != null){ tx.rollback();}
+ System.out.println("findByClassSubjectTeacherVisible has exception");
       }
       return list;
         
@@ -167,7 +216,7 @@ public List<SubjectOfClass> findByClassSubjectTeacherVisibleID(StudentClass c, S
          //  System.out.println("vracím : "+list.size());
 //          tx.commit();
       } catch (Exception e) {
-//          if(tx != null){ tx.rollback();}
+ System.out.println("findByClassSubjectTeacherVisibleID has exception");
       }
       return list;
         
@@ -180,7 +229,7 @@ public SubjectOfClass findByClassSubjectTeacherVisibleID(Long studentClass,Long 
        
       Session session= getSession();
 //      Transaction tx=null;
-      List<SubjectOfClass> list = new ArrayList<SubjectOfClass>();
+      List<SubjectOfClass> list;
       try {
         Query query = session.createQuery("SELECT u FROM SubjectOfClass AS u WHERE u.id_class.id = :id_class AND u.id_subject.id = :id_subject AND u.id_teacher.id = :id_teacher AND u.visible = true");
             query.setParameter("id_class", studentClass);

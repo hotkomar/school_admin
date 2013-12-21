@@ -62,7 +62,7 @@
                     <p></p>
                     <div class="col-lg-2">
                         <c:if test="${students.size()>0}">
-                            <a href="<c:url value="#"/>" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span><strong> Přidat známku</strong> </a>
+                            <a href="<c:url value="/teacher/classification/studentView/addMarks.htm?idSubject=${idSubject}&idClass=${students[0].id_class.id}"/>" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span><strong> Přidat známku</strong> </a>
                         </c:if>
                         
                     </div>

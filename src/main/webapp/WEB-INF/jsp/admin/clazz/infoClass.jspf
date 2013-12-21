@@ -29,9 +29,10 @@
                 
                 </div>
             <div class="col-lg-4">
+                <div class="btn-group">
                 <a href="<c:url value="editClass.htm?id=${classes.id}"/>" class=" btn btn-success "> <span class="glyphicon glyphicon-edit"></span><strong> Editovat záznam</strong></a>
                 <a href="<c:url value="removeClass.htm?id=${classes.id}&page=${pagination.page}"/>" class=" btn btn-danger "> <span class="glyphicon glyphicon-remove"></span><strong> Smazat záznam</strong></a>
-               
+                </div>
                         
             </div>
             </div>

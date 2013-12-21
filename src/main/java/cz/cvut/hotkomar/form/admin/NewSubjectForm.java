@@ -4,7 +4,12 @@
  */
 package cz.cvut.hotkomar.form.admin;
 
+import cz.cvut.hotkomar.service.checkAndMake.DateFunction;
+import cz.cvut.hotkomar.service.valid.BornMatch;
+import cz.cvut.hotkomar.service.valid.ExpirationMatch;
 import cz.cvut.hotkomar.service.valid.SubjectMatch;
+import java.util.Calendar;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -13,7 +18,10 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Marie Hoťková
  */
 @SubjectMatch(vFrom = "validFrom",expiration = "expiration", message = "Některé datum není ve správném formátu.")
+@BornMatch(born = "validFrom",message = "\"Platnost od\" je špatně zadaná nebo neexistuje")
+@ExpirationMatch(expirationDate ="expiration", message = "\"Platnost do\" je špatně zadaná nebo neexistuje")
 public class NewSubjectForm {
+    
     
     private Long id;
      @NotEmpty( message = "Jméno nesmí být prázdné.")
@@ -25,6 +33,10 @@ public class NewSubjectForm {
      @Pattern(regexp = "^[0-3][0-9].[0-1][0-9].[1-2][0-9][0-9][0-9]$|^{0}$", message = "Datum platnosti musí být ve tvaru den.měsíc.rok .")
     private String validFrom;
 
+     
+     
+     
+     
     public Long getId() {
         return id;
     }

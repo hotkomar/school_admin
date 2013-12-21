@@ -42,11 +42,13 @@ public class LoginMatchValidator implements ConstraintValidator<LoginMatch, Obje
         try {
             final String loginObj = BeanUtils.getProperty(value, loginName);
             if(loginObj.length()>0){
+                 System.out.println("Jsem v ifu validace");
             return checkForm.uniqueLogin(loginObj);
             }
         } catch (final Exception ignore) {
             ignore.printStackTrace();
         }
+         System.out.println("fuck off");
        return true;
     }
     

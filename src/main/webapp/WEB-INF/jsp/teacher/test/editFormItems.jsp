@@ -106,7 +106,8 @@
                            <div class="row">
                                <div class="col-lg-12">
                           <h4 class="text-info">Zadání testu</h4> 
-                         <div id="qestions" class="alert alert-success">
+                          <p class="text text-info">Správné odpovědi zaškrtněte.</p>
+                          <div id="qestions" class="alert"style="background-color: whitesmoke">
                          <c:forEach items="${form.questions}" var="q" varStatus="qstat">
                              <div id="q${qstat.index}">
                                  <div class="row">      
@@ -123,8 +124,10 @@
                     <f:errors path="questions[${qstat.index}].points" cssClass="alert alert-info" element="div"></f:errors>
                     </div>
                     <div class="col-lg-4">
+                        <div class="btn-group">
                         <button type="button" id="delQ${qstat.index}"  onclick="delQuestion(${qstat.index});" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span><strong>Smazat otázku</strong></button>
                               <button type="button" id="addA${qstat.index}"  onclick="addAnswerToQuestion(${qstat.index});"  class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span><strong>Přidat odpověď</strong></button>
+                    </div>
                     </div>
                     </div>
                                  <div class="row">
@@ -143,9 +146,9 @@
                                  
                              
                     
-                    <div id="answers" style= "padding-left: 50px;" >
+                    <div id="answers" style= "padding-left: 50px;padding-right: 50px;" >
                     <c:forEach items="${q.answers}" var="a" varStatus="astat">
-                        <div id="q${qstat.index}a${astat.index}" class="container alert alert-warning">
+                        <div id="q${qstat.index}a${astat.index}" class="container alert" style="background-color:white ">
                             <div class="row">
                                 <div class="col-lg-8"></div>
                                 <div class="col-lg-4">
@@ -192,12 +195,12 @@
                           
                              
                              <br/><br/>
-                            
+                             <div class="btn-group">
                              <button type="button" onclick="saveTest();" id="postTest"  class="btn btn-primary"><strong>Změnit test</strong></button>
-                             <a href="<c:url value="infoTest.htm?id=${form.id}"/>" id="removeTest" class="btn btn-danger"><strong>Zrušit editaci</strong></a>
+                             <a href="<c:url value="infoTest.htm?test=${form.id}"/>" id="removeTest" class="btn btn-danger"><strong>Zrušit editaci</strong></a>
                              <a href="<c:url value="addTestClear.htm"/>" class="btn btn-default"><strong>Smazat formulář</strong></a>
                              <f:hidden path="id"/>
-                             
+                             </div>
                              
                             </div>
                             

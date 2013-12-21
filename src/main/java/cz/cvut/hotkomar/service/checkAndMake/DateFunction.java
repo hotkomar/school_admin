@@ -221,10 +221,10 @@ public class DateFunction {
     public List<String> listOfSemester(Calendar c, Calendar yearOfEnd) {
         List<String> list = new ArrayList<String>();
         int semester = semester(c);
-        int year = Integer.valueOf(getYear(c));
-        int actualYear = Integer.valueOf(getYear(Calendar.getInstance()));
+        int year = Integer.parseInt(getYear(c));
+        int actualYear = Integer.parseInt(getYear(Calendar.getInstance()));
         //rok zakončení třídy
-        int lastYear = Integer.valueOf(getYear(yearOfEnd));
+        int lastYear = Integer.parseInt(getYear(yearOfEnd));
         int semesterActualYear = semester(Calendar.getInstance());
         //  int semesterActualYear =2;
 

@@ -4,6 +4,7 @@
  */
 package cz.cvut.hotkomar.form.teacher;
 
+import java.io.Serializable;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -11,7 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Maru
  */
-public class AnswerForm {
+public class AnswerForm implements Serializable{
   private Long id;
     @NotEmpty(message = "Nemáte vyplněnou odpověď")
     @Size(max=1024,message="Odpověď může obsahovat maximálně 1024 znaků")

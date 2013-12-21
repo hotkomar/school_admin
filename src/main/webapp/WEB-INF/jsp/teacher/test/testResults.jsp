@@ -21,7 +21,7 @@
             <br/>
         <table class="table table-bordered table-striped table-hover ">
             
-            <thead><tr>
+            <thead><tr style="background-color: steelblue;color: white">
             <th>Třída</th><th>info</th><th>Smazat výsledky testu</th></tr>
                 
             </thead>
@@ -56,7 +56,7 @@
             <br/>
         <table class="table table-bordered table-striped table-hover ">
             
-            <thead><tr>
+            <thead><tr style="background-color: steelblue;color: white">
             <th>Třída</th><th>info</th><th>Smazat výsledky testu</th></tr>
                 
             </thead>

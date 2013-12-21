@@ -99,14 +99,14 @@
                         
                         <f:hidden path="id" />
                         
-                           
+                        <div class="btn-group">  
                         <button class="btn btn-primary" type="submit">
                Editovat kontakt
             </button>
             <a class="btn btn-danger" href="<c:url value="personInfo.htm"/>">Zpět na profil</a>
             <button class="btn btn-default" type="reset">Zrušit změny</button>
                         
-                        
+                        </div>       
                 </f:form>
                 </div>
             </div>

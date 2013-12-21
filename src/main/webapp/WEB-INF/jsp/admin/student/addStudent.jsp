@@ -25,7 +25,7 @@
     
 </div>
         <div class="panel-body">
-            <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
+            
             <div class="row">
                 <c:if test="${message.positiveFull}">
     <div class="alert alert-success ">
@@ -41,6 +41,9 @@
 </div>
 </c:if>
             </div>
+            <c:choose>
+                <c:when test="${listClass.size()>0}">
+            <p class="alert-info"><strong>Údaje označené symbolem <span class="glyphicon glyphicon-asterisk"></span> jsou povinné.</strong></p>
             <f:form enctype="multipart/form-data"  class="form-horizontal" commandName="form" action="adminNewStudent.htm" method="POST">
                 <f:errors path="*" cssClass="alert alert-info" element="div"/>
                         <h4 class="text-info">Přihlašovací údaje</h4>
@@ -162,11 +165,12 @@
                     </div>
                         <div class="form-group">
                             
-                        <f:label path="motherMail" class="col-lg-2 control-label">E-mail:</f:label>
+                        <f:label path="motherMail" class="col-lg-2 control-label">E-mail:<span class="glyphicon glyphicon-asterisk"></span></f:label>
                         <div class="col-lg-5">
                         <f:input path="motherMail" id="motherMail" cssClass="form-control"/>
                         <f:errors path="motherMail" element="div" cssClass="alert alert-info" />
                         </div>
+                        <p class="text-info"><strong> Na tento e-mail budou zaslány přihlašovací údaje.</strong></p>
                     </div>
                         <h5 class="text-info">2. zákonný zástupce</h5>
                        <div class="form-group">
@@ -247,7 +251,10 @@
                         
                         
                 </f:form>
-            
+                </c:when>
+                <c:otherwise>
+                    <p class="alert alert-warning">Nemůžete přidat studenta.</p>
+                </c:otherwise>
         </div>
     </div>
     

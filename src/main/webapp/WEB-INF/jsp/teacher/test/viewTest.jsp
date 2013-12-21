@@ -77,7 +77,10 @@
                 <c:choose >
                     <c:when test="${listTest.size()>0}">
                         <table class="table table-bordered table-striped table-hover">
-                        <thead><th>Jméno</th><th>Předmět</th><th>Počet otázek</th><th>Zadané heslo</th><th>Info</th><th>Editovat</th><th>Smazat</th><th>Heslo</th></thead>
+                            <thead><tr style="background-color: steelblue;color: white;">
+                        <th>Jméno</th><th>Předmět</th><th>Počet otázek</th><th>Zadané heslo</th><th>Info</th><th>Editovat</th><th>Smazat</th><th>Heslo</th>
+                            </tr>
+                        </thead>
                         <tfoot></tfoot>
                         <tbody>
                 <c:forEach items="${listTest}" var="listT">

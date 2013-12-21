@@ -73,9 +73,9 @@
                 <div class="col-lg-9">
                     <table class="table table-bordered table-striped table-hover">
                     <thead>
-                     
-                            <th colspan="2">Osobní údaje</th>
-                      
+                    <tr>
+                    <th colspan="2" style="background-color: steelblue;color: white">Osobní údaje</th>
+                    </tr> 
                     
                 </thead>
                 <tfoot>
@@ -110,10 +110,10 @@
                          <div class="col-lg-9">
                <table class="table table-bordered table-striped table-hover">
                     <thead>
-                     
-                            <th colspan="2">Pozice</th>
+                        <tr>
+                            <th colspan="2" style="background-color: steelblue;color: white">Pozice</th>
                       
-                    
+                        </tr>
                 </thead>
                 <tfoot>
                     
